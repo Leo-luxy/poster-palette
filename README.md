@@ -25,6 +25,7 @@ TMDB API  ──►  movies.csv  ──┐
 | `data/movies.csv` | 14,662 部 | 元数据：片名、年份、类型、评分、语言、海报路径 |
 | `data/color_features.csv` | 14,657 行 | 配色特征：饱和度 / 明度 / 色相分布 / 主色 / 色彩丰富度 |
 | `data/yearly*.csv` | 76 + 1,338 行 | 年度聚合，做趋势图直接读 |
+| `data/movie_details.csv` | 14,662 行 | 详情：生产国家、预算、票房、片长、系列、IMDb id |
 | `data/posters/` | 14,657 张 | 海报原图 342×512，共 716 MB |
 
 ## 工具链
@@ -32,6 +33,7 @@ TMDB API  ──►  movies.csv  ──┐
 | 脚本 | 输入 → 输出 | 要 key 吗 |
 | --- | --- | --- |
 | `scripts/01_fetch.py` | TMDB → `movies.csv` + 海报 | 是（仅 A 用） |
+| `scripts/06_details.py` | TMDB 详情 → `movie_details.csv`（国家 / 预算 / 票房） | 是（仅 A，已跑完） |
 | `scripts/03_features.py` | 海报 → `color_features.csv` | 否 |
 | `scripts/04_yearly.py` | 两张表 → `yearly*.csv` | 否 |
 | `scripts/05_fig3_score.py` | 两张表 → 图 3 | 否 |
@@ -54,10 +56,12 @@ TMDB API  ──►  movies.csv  ──┐
 
 **③ 空间：不同国家的海报能不能看出差异？**
 
-现成可用的代理是 `original_language`：英语 10,764（73%）、法语 1,107、意大利语 636、
-日语 496、西班牙语 370、韩语 187、中文 227。样本量够做 5–6 个语种的对比。
+真国家维度已经有了：`data/movie_details.csv` 的 `production_countries`，14,648 部有记录、125 个国家，
+头部是美国 9,767、英国 2,076、法国 1,984、意大利 954、德国 889、加拿大 844、日本 655。
+用 `common.has_country(df, 'JP')` 取子集。
 
-想要真正的国家维度，得补 `production_countries` 字段（见下节成本）。
+想用语言当代理也行（`original_language`：英语 10,764、法语 1,107、日语 496…），
+但两者不是一回事——前者是资方/制片地，后者是原始语言，报告里要说清用的哪个。
 
 **④ 效用：颜色和口碑有关系吗？**
 
@@ -79,7 +83,7 @@ TMDB API  ──►  movies.csv  ──┐
 
 | 想加什么 | 怎么做 | 成本 |
 | --- | --- | --- |
-| `production_countries`、`budget`、`revenue` | 逐片调 `/movie/{id}` 详情 | 14,662 次请求，约 40–60 分钟（A 跑） |
+| ~~`production_countries`、`budget`、`revenue`~~ | ✅ 已补，见 `data/movie_details.csv` | 已完成 |
 | 高清海报 / 剧照 | 把 URL 里的 `w342` 换成 `original` | 几分钟，不用 key |
 | 2026 年新片 | 重跑 `01_fetch.py` | 元数据约 15 分钟 + 海报约 40 分钟 |
 | 更多语种 / 更宽年份 | 放宽 `vote_count` 门槛重采 | 同上 |

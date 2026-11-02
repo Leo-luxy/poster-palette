@@ -30,6 +30,13 @@ def load():
     m = pd.read_csv(os.path.join(DATA, 'movies.csv'), dtype={'id': int})
     f = pd.read_csv(os.path.join(DATA, 'color_features.csv'))
     df = m.merge(f, left_on='id', right_on='tmdb_id')
+
+    # 详情表（生产国家、预算、票房等）：有就左连接，没有也不影响
+    det = os.path.join(DATA, 'movie_details.csv')
+    if os.path.exists(det):
+        df = df.merge(pd.read_csv(det, dtype={'id': int}), on='id', how='left')
+        df['country_first'] = df['production_countries'].fillna('').str.split('|').str[0]
+
     df['decade'] = (df['year'] // 10 * 10).astype(int)
     df['genres'] = df['genre_ids'].astype(str).apply(
         lambda s: [GENRE.get(int(g), g) for g in s.split('|') if g and g != 'nan'])
@@ -38,6 +45,11 @@ def load():
 
 def has_genre(df, name):
     return df['genres'].apply(lambda gs: name in gs)
+
+
+def has_country(df, iso):
+    """按生产国家取子集，如 common.has_country(df, 'JP')。"""
+    return df['production_countries'].fillna('').apply(lambda s: iso in s.split('|'))
 
 
 def usable_hue(df):
