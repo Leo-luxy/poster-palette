@@ -2,9 +2,6 @@
 .env
 *.env
 
-# 大文件：716 MB 海报，走共享盘，不进仓库
-data/posters/
-
 # 中间产物
 probe/cache/
 scripts/__pycache__/

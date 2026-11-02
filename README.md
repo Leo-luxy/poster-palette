@@ -32,14 +32,18 @@ print(len(df))              # 14657
 
 **不需要 API key**，所有数据都已落盘。
 
-## 海报图没有进仓库
+## 仓库里带全部海报
 
-`data/posters/`（14,657 张，716 MB）体积太大，且海报版权归片方，不放进 Git。
-需要看图请从共享盘取，或按 `data/movies.csv` 里的 `poster_path` 自己下：
+`data/posters/` 下是 **14,657 张海报**（342×512，共 716 MB），文件名就是 `id`。
 
-```python
-url = f"https://image.tmdb.org/t/p/w342{poster_path}"   # 公开图床，不用 key
+因为带了大文件，**仓库体积约 730 MB**，直接 `git clone` 会比较慢。只想看图的话，
+建议用网页版仓库逐张点开，或者用浅克隆：
+
+```bash
+git clone --depth 1 https://github.com/Leo-luxy/poster-palette.git
 ```
+
+海报版权归各片方，仅用于课程作业的学术展示，不再分发。
 
 ## 数据来源
 
