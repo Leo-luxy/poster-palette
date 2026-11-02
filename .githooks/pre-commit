@@ -1,0 +1,18 @@
+#!/bin/sh
+# 阻止误改 data/。启用方式：sh scripts/install_hooks.sh
+# A 自己补数据时用：ALLOW_DATA=1 git commit ...   或   git commit --no-verify
+
+changed=$(git diff --cached --name-only --diff-filter=ACMRD -- data/ 2>/dev/null)
+
+if [ -n "$changed" ] && [ "${ALLOW_DATA:-0}" != "1" ]; then
+  echo ""
+  echo "  ✋ data/ 是只读的，这次提交动了这些文件："
+  echo "$changed" | sed 's/^/      /'
+  echo ""
+  echo "  数据有问题找 A 改，别自己动。真需要动（比如你在补数据）："
+  echo "      ALLOW_DATA=1 git commit -m \"...\""
+  echo ""
+  exit 1
+fi
+
+exit 0

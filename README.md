@@ -88,22 +88,23 @@ TMDB API  ──►  movies.csv  ──┐
 | 2026 年新片 | 重跑 `01_fetch.py` | 元数据约 15 分钟 + 海报约 40 分钟 |
 | 更多语种 / 更宽年份 | 放宽 `vote_count` 门槛重采 | 同上 |
 
-## 协作：每人一条分支，直接 push
+## 协作：直接推 main，`data/` 只读
 
-`main` 受保护，谁都不能直接推；每人有自己的分支，改完推自己的，A 点一下合并。
+不用建分支、不用提 PR——大家**直接往 `main` 推**，推之前点一下 **Pull origin** 就行。
+唯一不能碰的是 `data/`：数据是所有人的输入，一个人改，另外三个人的图会静默变化。
 
-| 分支 | 谁 | 只改这些 |
-| --- | --- | --- |
-| `feat/b` | B | `figures/fig_q1_*.png`、`outputs/b/` |
-| `feat/c` | C | `figures/fig_q2_*.png`、`figures/fig_q4_*.png`、`outputs/c/` |
-| `feat/d` | D | `docs/报告.*`、`docs/汇报.*`、`outputs/d/` |
-| `main` | A | `data/`、`scripts/`、`README.md` |
+| 谁 | 只改这些 |
+| --- | --- |
+| **B** | `figures/fig_q1_*.png`、`outputs/b/` |
+| **C** | `figures/fig_q2_*.png`、`figures/fig_q4_*.png`、`outputs/c/` |
+| **D** | `docs/报告.*`、`docs/汇报.*`、`outputs/d/` |
+| **A** | `data/`、`scripts/`、`README.md` |
 
-推自己的分支永远不会被拒，也不会影响别人——四个人改的是不同文件，物理上撞不上。
-`data/` 是只读的，缺字段找 A。
+文件名不撞，Git 就不会冲突。`data/` 有三道保护：本地 pre-commit 钩子（`sh scripts/install_hooks.sh` 装一次）、
+CI 检查、以及 A 手上的全量备份。
 
-完整的点法（GitHub Desktop 每一步点哪、常见报错怎么办）见
-[`docs/协作流程`](docs/协作流程.md)，**第一次动手前花 5 分钟看一遍**。
+完整的点法（克隆、Pull、push、报错对照）见 [`docs/协作流程`](docs/协作流程.md)，
+**第一次动手前花 5 分钟看一遍**。
 
 ## 文档索引
 

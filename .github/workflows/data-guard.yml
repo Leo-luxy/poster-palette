@@ -1,0 +1,32 @@
+name: data-guard
+
+# 只做一件事：有人往 main 推了 data/ 下的文件，就把这次运行标红。
+# 不是拦截（推上去就已经生效了），是让改动留痕、能被看见。
+# A 自己补数据不触发。
+on:
+  push:
+    branches: [main]
+
+jobs:
+  guard:
+    if: github.actor != 'Leo-luxy'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检查这次推送有没有动 data/
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          before='${{ github.event.before }}'
+          after='${{ github.event.after }}'
+          if [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            echo "首次推送，跳过检查"
+            exit 0
+          fi
+          files=$(gh api "repos/$GITHUB_REPOSITORY/compare/$before...$after" \
+                  --jq '.files[].filename' | grep '^data/' || true)
+          if [ -n "$files" ]; then
+            echo "::error::data/ 被修改，请找 A 回滚："
+            echo "$files"
+            exit 1
+          fi
+          echo "✓ data/ 未改动"
