@@ -100,7 +100,8 @@ TMDB API  ──►  movies.csv  ──┐
 | **D** | `docs/报告.*`、`docs/汇报.*`、`outputs/d/` |
 | **A** | `data/`、`scripts/`、`README.md` |
 
-文件名不撞，Git 就不会冲突。`data/` 有三道保护：本地 pre-commit 钩子（`sh scripts/install_hooks.sh` 装一次）、
+文件名不撞，Git 就不会冲突。`outputs/` 是各人的草稿箱（脚本、试画、中间 CSV），
+`figures/` 是全组发布目录（只放定稿，D 的 PPT 只从这里取图）。`data/` 有三道保护：本地 pre-commit 钩子（`sh scripts/install_hooks.sh` 装一次）、
 CI 检查、以及 A 手上的全量备份。
 
 完整的点法（克隆、Pull、push、报错对照）见 [`docs/协作流程`](docs/协作流程.md)，
