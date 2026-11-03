@@ -1,0 +1,7 @@
+﻿dimension,metric,metric_label,test_type,stat_val,p_val,df,effect_size_type,effect_size,note,科幻_median,科幻_iqr,爱情_median,爱情_iqr,恐怖_median,恐怖_iqr
+连续特征检验,mean_v,平均明度,Kruskal-Wallis,1349.64,8.497874762906801e-294,2,eta_squared,0.2163,"三类差异显著 (H=1349.6, eta2=0.216)",0.466,0.2439,0.6278,0.2742,0.3528,0.2545
+连续特征检验,mean_s,平均饱和度,Kruskal-Wallis,116.59,4.827820539975246e-26,2,eta_squared,0.0184,"三类差异显著 (H=116.6, eta2=0.018)",0.4414,0.2337,0.369,0.2487,0.421,0.2881
+连续特征检验,colorful,色彩丰富度,Kruskal-Wallis,202.52,1.0543294131853112e-44,2,eta_squared,0.0322,"三类差异显著 (H=202.5, eta2=0.032)",58.175,40.5425,58.12,34.7175,47.1,40.3625
+色相分布独立性,12_hue_sectors,12扇区色相全量分布,Chi-Square,169.11,1.1079672778327292e-24,22,Cramers_V,0.1178,"色相分布与类型强相关 (chi2=169.1, V=0.118)",,,,,,
+敏感性分析,hue_excl_h0,剔除肤色区(h0)色相分布,Chi-Square (Sensitivity),94.0,1.4690716112642725e-11,20,Cramers_V,0.1067,"剔除人脸肤色后依然显著 (chi2=94.0, V=0.107)",,,,,,
+成对效应量,mean_v_romance_vs_horror,爱情 vs 恐怖明度差异,Mann-Whitney U,4106794.0,9.547177682499258e-266,1,median_delta,0.275,爱情明度中位数比恐怖片高出 0.275,,,,,,
