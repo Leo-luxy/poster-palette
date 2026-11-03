@@ -45,11 +45,14 @@ plt.rcParams['axes.unicode_minus'] = False
 
 GENRES_8 = ['动画', '喜剧', '爱情', '剧情', '动作', '科幻', '犯罪', '恐怖']
 
+# 经 outputs/b/clustering_benchmark.py 评测 48 组策略选出的全局最优方案：
+# 特征空间: Base_5D [mean_v, mean_s, colorful, sin_hue, cos_hue]
+# 聚类模型: K-Means (k=4) (Davies-Bouldin=1.204 全局最优, Cramér's V=0.1711 题材区分峰值, Min%=22.1% 均衡分布)
 CLUSTER_NAMES = {
-    0: '深邃冷蓝型',
-    1: '极暗黑煞型',
-    2: '高彩明艳型',
-    3: '通透高明型'
+    0: '冷光青蓝调',
+    1: '极致暗黑调',
+    2: '高饱和艳丽调',
+    3: '高亮通透调'
 }
 CLUSTER_BASE_COLORS = {
     0: '#2b6cb0',  # 科技冷蓝
@@ -274,7 +277,7 @@ def render_fig1_spectacular(df_u):
     ax_c.set_yticklabels(GENRES_8, fontsize=9.5, fontweight='bold')
     ax_c.set_xlim(-0.6, 3.6)
     ax_c.set_ylim(-0.6, len(GENRES_8) - 0.4)
-    ax_c.set_title('面板 C：8 大类型在 4 种海报画风中的分布 (每行和=100%)\n(χ² = 2162.1, p < 1e-300)',
+    ax_c.set_title('面板 C：8 大类型在 4 大物理色型中的分布 (每行和=100%)\n(χ² = 2162.1, p < 1e-300)',
                    fontsize=10.5, fontweight='bold', pad=12)
     ax_c.invert_yaxis() # 从上到下对应动画->恐怖
 
