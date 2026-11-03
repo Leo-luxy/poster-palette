@@ -29,6 +29,23 @@ def main():
     L.append(f'- 记录数：**{n:,}**　唯一 id：**{len(set(ids)):,}**　重复：{n - len(set(ids))}')
     L.append(f'- 元数据文件：{CSV_PATH}')
 
+    # 采集口径：每年代的实际票数门槛
+    cut_path = os.path.join(ROOT, 'outputs', 'a', 'era_cutoff.csv')
+    if os.path.exists(cut_path):
+        cut = {int(r['year']): int(r['cutoff'])
+               for r in csv.DictReader(open(cut_path, encoding='utf-8'))}
+        L.append('\n## 0. 采集口径：每年票数门槛（不是固定的 200）\n')
+        L.append('按「每年票数前 2.6%」取片，所以门槛随年代变化：')
+        L.append('\n| 年代 | 票数门槛 | 入库 | 该年代库里总数 | 通过率 |')
+        L.append('| --- | --- | --- | --- | --- |')
+        for d in sorted({y // 10 * 10 for y in cut}):
+            ys = [y for y in cut if y // 10 * 10 == d]
+            lo, hi = min(cut[y] for y in ys), max(cut[y] for y in ys)
+            cnt = sum(1 for r in rows if r['year'] and int(r['year']) // 10 * 10 == d)
+            tot = int(sum(int(r['total_all']) for r in csv.DictReader(
+                open(cut_path, encoding='utf-8')) if int(r['year']) // 10 * 10 == d))
+            L.append(f'| {d}s | {lo}–{hi} | {cnt:,} | {tot:,} | {cnt/tot*100:.2f}% |')
+
     def miss(key, pred):
         c = sum(1 for r in rows if pred(r))
         return f'{c:,}（{c/n*100:.1f}%）'

@@ -2,7 +2,7 @@
 
 > 数据分析实践 · 课程大作业
 
-**一句话**：用 14,662 部电影的海报配色，从**结构、时间、空间**三个角度回答「什么是流行、什么是套路」。
+**一句话**：用 19,700 部电影的海报配色，从**结构、时间、空间**三个角度回答「什么是流行、什么是套路」。
 
 ---
 
@@ -22,18 +22,22 @@ TMDB API  ──►  movies.csv  ──┐
 
 | 文件 | 规模 | 用途 |
 | --- | --- | --- |
-| `data/movies.csv` | 14,662 部 | 元数据：片名、年份、类型、评分、语言、海报路径 |
-| `data/color_features.csv` | 14,657 行 | 配色特征：饱和度 / 明度 / 色相分布 / 主色 / 色彩丰富度 |
-| `data/yearly*.csv` | 76 + 1,338 行 | 年度聚合，做趋势图直接读 |
-| `data/movie_details.csv` | 14,662 行 | 详情：生产国家、预算、票房、片长、系列、IMDb id |
-| `data/posters/` | 14,657 张 | 海报原图 342×512，共 716 MB |
+| `data/movies.csv` | 19,700 部 | 元数据：片名、年份、类型、评分、语言、海报路径 |
+| `data/color_features.csv` | 19,694 行 | 配色特征：饱和度 / 明度 / 色相分布 / 主色 / 色彩丰富度 |
+| `data/yearly*.csv` | 76 + 1,411 行 | 年度聚合，做趋势图直接读 |
+| `data/movie_details.csv` | 19,700 行 | 详情：生产国家、预算、票房、片长、系列、IMDb id |
+| `data/posters/` | 19,694 张 | 海报原图 342×512，共 911 MB，**原语言版** |
 
 ## 工具链
 
 | 脚本 | 输入 → 输出 | 要 key 吗 |
 | --- | --- | --- |
-| `scripts/01_fetch.py` | TMDB → `movies.csv` + 海报 | 是（仅 A 用） |
-| `scripts/06_details.py` | TMDB 详情 → `movie_details.csv`（国家 / 预算 / 票房） | 是（仅 A，已跑完） |
+| `probe/era_expand.py` | TMDB → 按「每年前 2.6%」补片 | 是（仅 A，已跑完） |
+| `probe/plan_orig_posters.py` | TMDB 全部海报 → 挑原语言版 → `poster_plan_v2.csv` | 是（仅 A，已跑完） |
+| `probe/download_orig_posters.py` | 计划 → 下载海报 | 否（要联网） |
+| `scripts/01_fetch.py` | TMDB → `movies.csv` + 海报（v1 全量采集） | 是（仅 A） |
+| `scripts/06_details.py` | TMDB 详情 → `movie_details.csv`（国家 / 预算 / 票房） | 是（仅 A） |
+| `scripts/02_check.py` | `movies.csv` → `quality_report.md` | 否 |
 | `scripts/03_features.py` | 海报 → `color_features.csv` | 否 |
 | `scripts/04_yearly.py` | 两张表 → `yearly*.csv` | 否 |
 | `scripts/05_fig3_score.py` | 两张表 → 图 3 | 否 |
@@ -118,7 +122,16 @@ CI 检查、以及 A 手上的全量备份。
 
 ## 数据来源
 
-TMDB API，`vote_count ≥ 200`，1950-01-01 至 2025-12-31，采集于 **2026-11-02**。
+TMDB API，1950-01-01 至 2025-12-31，采集于 **2026-11-02**（v1）、**2026-11-03**（v2 补片与换图）。
+
+采样口径不是固定票数，而是**每年取票数前 2.6%**：固定 200 票对 2010s 差不多正好，
+对 1950s 却高了 4 倍，会把老片筛成「前 0.9% 的经典」。改成逐年分位后，
+各年代通过率拉平在 2.6–3.1%，1950s 的样本从 261 部变成 868 部。
+
+海报取的是**原语言版**（`iso_639_1 == original_language`，没有则退无文字版），
+不是 TMDB 按 `language=zh-CN` 默认返回的中文版。TMDB 没有海报日期字段，
+所以「首映版 / 重映版」无法区分——这条写进了 `docs/数据字典` 的局限里。
+
 海报版权归各片方，仅用于课程作业的学术展示，不再分发。
 
 仓库带全部海报，克隆较慢；只看代码和 CSV 用浅克隆：

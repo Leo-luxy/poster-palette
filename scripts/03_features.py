@@ -94,7 +94,8 @@ def main():
     files = sorted(f for f in os.listdir(POSTERS) if f.endswith('.jpg'))
     print(f'待处理 {len(files)} 张')
     rows, err = [], 0
-    with ProcessPoolExecutor(max_workers=6) as ex:
+    # 进程数可用 WORKERS 环境变量调低（机器还要用的时候：WORKERS=2 nice -n 19 python3 ...）
+    with ProcessPoolExecutor(max_workers=int(os.environ.get('WORKERS', 6))) as ex:
         for i, (tid, feat) in enumerate(ex.map(work, files, chunksize=64), 1):
             if 'error' in feat:
                 err += 1
