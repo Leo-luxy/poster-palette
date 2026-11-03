@@ -1,11 +1,15 @@
 # 图 1 真实物理光谱可视化解读、多策略聚类评测与统计交付说明
 
 > **作者**：成员 B（海报配色结构维度）  
-> **关联图表**：`figures/fig_q1_hue.png`  
-> **基准评测脚本**：`outputs/b/clustering_benchmark.py`  
-> **基准评测数据**：`outputs/b/clustering_benchmark.csv`  
-> **主可视化脚本**：`outputs/b/fig1_hue.py`  
-> **统计数据表**：`outputs/b/fig1_stats.csv`  
+> **全量交付图表**：
+> 1. `figures/fig_q1_hue.png`（图 1 定稿主图：真实光谱流形、8大类型基因带与色型流向热力矩阵）
+> 2. `figures/fig_q1_preset_bars.png`（图 1 做法 A 预设对比图：科幻/爱情/恐怖 12 扇区柱状图与 Kruskal-Wallis 差异检验）
+> 3. `figures/fig_clustering_benchmark.png`（多策略模型选型证据链：48组策略帕累托前沿、DB极值曲线与特征雷达图）
+> **全量代码与数据产物**：
+> - `outputs/b/fig1_hue.py` & `outputs/b/fig1_stats.csv`（主图生成与统计）
+> - `outputs/b/fig1_preset_bars.py` & `outputs/b/fig1_preset_stats.csv`（预设分组分析）
+> - `outputs/b/clustering_benchmark.py` & `outputs/b/clustering_benchmark.csv`（48 组策略基准评测）
+> - `outputs/b/fig_clustering_benchmark.py`（模型选型诊断图脚本）
 
 ---
 
