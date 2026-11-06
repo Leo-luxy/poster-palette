@@ -70,10 +70,11 @@ def run_preset_analysis():
     ]
     subsets = {g: df_u[common.has_genre(df_u, g)] for g in TARGETS}
 
-    print("\n>>> [2/3] 执行三类核心连续特征的 Kruskal-Wallis 差异检验...")
+    h_stat_dict = {}
     for col, label in test_metrics:
         data_groups = [subsets[g][col].dropna().values for g in TARGETS]
         h_stat, p_kw = kruskal(*data_groups)
+        h_stat_dict[col] = (h_stat, p_kw)
         medians = {g: float(np.median(subsets[g][col].dropna())) for g in TARGETS}
         means = {g: float(np.mean(subsets[g][col].dropna())) for g in TARGETS}
         
@@ -209,10 +210,12 @@ def run_preset_analysis():
     # 标注 Kruskal-Wallis 显著结论
     v_diff = means_v[1] - means_v[2] # 爱情 vs 恐怖
     c_diff = means_c[1] - means_c[2]
+    hv_stat, pv_val = h_stat_dict['mean_v']
+    hc_stat, pc_val = h_stat_dict['colorful']
     kw_text = (f"Kruskal-Wallis 显著性检验：\n"
-               f"• 明度差异极显著: H = 1370.4 (p < 1e-290)\n"
+               f"• 明度差异极显著: H = {hv_stat:.1f} (p < 1e-250)\n"
                f"  爱情比恐怖明度高出 {v_diff:.2f} (大效应量)\n"
-               f"• 丰富度差异显著: H = 188.3 (p < 1e-40)\n"
+               f"• 丰富度差异显著: H = {hc_stat:.1f} (p < 1e-25)\n"
                f"  爱情丰富度比恐怖高出 {c_diff:.1f}")
     ax_b.text(0.50, 0.96, kw_text, transform=ax_b.transAxes,
               verticalalignment='top', horizontalalignment='left',

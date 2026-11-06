@@ -49,7 +49,28 @@ def render_benchmark_dashboard():
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(df_u[feats].values)
     kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
-    df_u['cluster'] = kmeans.fit_predict(X_scaled)
+    raw_labels = kmeans.fit_predict(X_scaled)
+    
+    # 物理不变量锁定：确保无论 KMeans 初始标签顺序如何，0/1/2/3 严格绑定其物理色型
+    centers_unscaled = scaler.inverse_transform(kmeans.cluster_centers_)
+    hues = [np.rad2deg(np.arctan2(centers_unscaled[c, 3], centers_unscaled[c, 4])) % 360 for c in range(4)]
+    mean_vs = [centers_unscaled[c, 0] for c in range(4)]
+    colorfulness = [centers_unscaled[c, 2] for c in range(4)]
+    
+    blue_idx = int(np.argmin([abs(h - 225) for h in hues]))
+    remaining = [c for c in range(4) if c != blue_idx]
+    colorful_idx = max(remaining, key=lambda c: colorfulness[c])
+    remaining = [c for c in remaining if c != colorful_idx]
+    dark_idx = min(remaining, key=lambda c: mean_vs[c])
+    bright_idx = max(remaining, key=lambda c: mean_vs[c])
+    
+    canonical_map = {
+        blue_idx: 0,     # 冷光青蓝调
+        dark_idx: 1,     # 极致暗黑调
+        colorful_idx: 2, # 高饱和艳丽调
+        bright_idx: 3    # 高亮通透调
+    }
+    df_u['cluster'] = np.array([canonical_map[l] for l in raw_labels])
 
     # 4 大色型名称与代表色
     cluster_meta = {
@@ -98,9 +119,9 @@ def render_benchmark_dashboard():
                   color=style['color'], marker=style['marker'], lw=style['lw'],
                   ls=style.get('ls', '-'), markersize=7)
 
-    # 标注最低极值点 (K-Means, k=4, DB=1.204)
-    ax_a.scatter([4], [1.204], s=160, facecolors='none', edgecolors='#c53030', lw=2.5, zorder=5)
-    ax_a.annotate('全局最优极小值\nK-Means (k=4, DB=1.204)', xy=(4, 1.204), xytext=(4.15, 1.60),
+    # 标注最低极值点 (K-Means, k=4, DB=1.211)
+    ax_a.scatter([4], [1.211], s=160, facecolors='none', edgecolors='#c53030', lw=2.5, zorder=5)
+    ax_a.annotate('全局最优极小值\nK-Means (k=4, DB=1.211)', xy=(4, 1.211), xytext=(4.15, 1.60),
                   arrowprops=dict(arrowstyle="->", color='#c53030', lw=1.8),
                   fontsize=9, fontweight='bold', color='#9b2c2c',
                   bbox=dict(boxstyle="round,pad=0.25", fc='#fff5f5', ec='#e53e3e', alpha=0.95))
@@ -140,10 +161,10 @@ def render_benchmark_dashboard():
                          linestyle='--', label=f"{feat_name} (退化坍缩)")
 
     # 高亮最优选型点 (Base_5D, K-Means, k=4)
-    best_sil = 0.2586
-    best_cv = 0.1711
+    best_sil = 0.2573
+    best_cv = 0.1607
     ax_b.scatter([best_sil], [best_cv], s=200, facecolors='#e53e3e', edgecolors='#742a2a', lw=2.0, zorder=6)
-    ax_b.annotate('帕累托最优解\nBase_5D + K-Means (k=4)\n(Sil=0.259, V=0.171)',
+    ax_b.annotate('帕累托最优解\nBase_5D + K-Means (k=4)\n(Sil=0.257, V=0.161)',
                   xy=(best_sil, best_cv), xytext=(best_sil - 0.08, best_cv + 0.015),
                   arrowprops=dict(arrowstyle="->", color='#c53030', lw=1.8),
                   fontsize=8.5, fontweight='bold', color='#742a2a',
@@ -175,7 +196,7 @@ def render_benchmark_dashboard():
     bars_ch = ax_c.bar(pos - bwidth/2, comp_rows['Calinski_Harabasz'], bwidth,
                        color='#3182ce', alpha=0.88, label='Calinski-Harabasz 指标 (左轴, 越高越优)')
     for idx, v in enumerate(comp_rows['Calinski_Harabasz']):
-        ax_c.text(idx - bwidth/2, v + 100, f"{v:.1f}", ha='center', fontsize=8.5, fontweight='bold', color='#1a365d')
+        ax_c.text(idx - bwidth/2, v + 120, f"{v:.1f}", ha='center', fontsize=8.5, fontweight='bold', color='#1a365d')
 
     # 右轴：Davies-Bouldin (柱状图)
     bars_db = ax_c_twin.bar(pos + bwidth/2, comp_rows['Davies_Bouldin'], bwidth,
@@ -188,14 +209,14 @@ def render_benchmark_dashboard():
     ax_c.set_xticklabels(feat_labels, fontsize=9.5, fontweight='bold')
     ax_c.set_ylabel('Calinski-Harabasz 指标', fontsize=10.5, fontweight='bold', color='#2b6cb0')
     ax_c_twin.set_ylabel('Davies-Bouldin 指标', fontsize=10.5, fontweight='bold', color='#dd6b20')
-    ax_c.set_ylim(0, 6200)
+    ax_c.set_ylim(0, 8400)
     ax_c_twin.set_ylim(0.5, 2.4)
     ax_c.grid(axis='y', alpha=0.25, linestyle=':')
 
     # 标注维数灾难与共线性失效说明
     fail_box = ("特征空间退化机理：\n"
                 "• Spectral_15D: 稀疏直方图维数灾难\n"
-                "  CH腰斩 (5206→1662), 最小簇跌至 7.5%\n"
+                "  CH腰斩 (6947→2201), 最小簇跌至 8.0%\n"
                 "• Contrast_6D: 明暗差与均值强约束\n"
                 "  引入非线性冗余噪声")
     ax_c.text(0.03, 0.96, fail_box, transform=ax_c.transAxes,

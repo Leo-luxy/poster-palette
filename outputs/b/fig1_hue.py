@@ -75,7 +75,33 @@ def fit_clusters(df_u):
     
     # 最优 k=4 聚类
     kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
-    df_u['cluster'] = kmeans.fit_predict(X_scaled)
+    raw_labels = kmeans.fit_predict(X_scaled)
+    
+    # 物理不变量锁定：确保无论 KMeans 初始标签顺序如何，0/1/2/3 严格绑定其物理色型
+    centers_unscaled = scaler.inverse_transform(kmeans.cluster_centers_)
+    hues = [np.rad2deg(np.arctan2(centers_unscaled[c, 3], centers_unscaled[c, 4])) % 360 for c in range(4)]
+    mean_vs = [centers_unscaled[c, 0] for c in range(4)]
+    colorfulness = [centers_unscaled[c, 2] for c in range(4)]
+    
+    # 1. 寻找青蓝波段簇 (接近 225°)
+    blue_idx = int(np.argmin([abs(h - 225) for h in hues]))
+    remaining = [c for c in range(4) if c != blue_idx]
+    
+    # 2. 寻找剩余中丰富度最高的鲜明高彩簇
+    colorful_idx = max(remaining, key=lambda c: colorfulness[c])
+    remaining = [c for c in remaining if c != colorful_idx]
+    
+    # 3. 寻找剩余中最暗和最亮簇
+    dark_idx = min(remaining, key=lambda c: mean_vs[c])
+    bright_idx = max(remaining, key=lambda c: mean_vs[c])
+    
+    canonical_map = {
+        blue_idx: 0,     # 冷光青蓝调
+        dark_idx: 1,     # 极致暗黑调
+        colorful_idx: 2, # 高饱和艳丽调
+        bright_idx: 3    # 高亮通透调
+    }
+    df_u['cluster'] = np.array([canonical_map[l] for l in raw_labels])
     df_u['cluster_name'] = df_u['cluster'].map(CLUSTER_NAMES)
     return df_u, kmeans, X_scaled
 
@@ -214,11 +240,12 @@ def render_fig1_spectacular(df_u):
                       fontsize=8.5, fontweight='bold', color='white',
                       bbox=dict(boxstyle="square,pad=0.18", fc='#9b2c2c', ec='white', lw=0.6, alpha=0.9))
         elif g == '恐怖':
-            ax_b.text(78, i, f'极致压抑暗黑 (V=0.35)', va='center', ha='center',
+            ax_b.text(78, i, f'极致压抑暗黑 (V={v_med:.2f})', va='center', ha='center',
                       fontsize=8.5, fontweight='bold', color='white',
                       bbox=dict(boxstyle="square,pad=0.18", fc='#171923', ec='white', lw=0.6, alpha=0.9))
         elif g == '动画':
-            ax_b.text(48, i, f'高彩全色谱 (丰富度 80.4)', va='center', ha='center',
+            anim_col = sub['colorful'].mean()
+            ax_b.text(48, i, f'高彩全色谱 (丰富度 {anim_col:.1f})', va='center', ha='center',
                       fontsize=8.5, fontweight='bold', color='white',
                       bbox=dict(boxstyle="square,pad=0.18", fc='#744210', ec='white', lw=0.6, alpha=0.9))
 
@@ -238,17 +265,21 @@ def render_fig1_spectacular(df_u):
     # -------------------------------------------------------------
     ax_c = fig.add_subplot(gs[2])
     
-    # 构建交叉百分比数据
+    # 构建交叉百分比数据与频数表
     heatmap_matrix = []
+    ct_counts = []
     for g in GENRES_8:
         sub = df_u[common.has_genre(df_u, g)]
+        raw_vc = sub['cluster'].value_counts().reindex(range(4), fill_value=0)
+        ct_counts.append(raw_vc.values)
         vc = sub['cluster'].value_counts(normalize=True).reindex(range(4), fill_value=0) * 100
         heatmap_matrix.append(vc.values)
     heatmap_matrix = np.array(heatmap_matrix)
+    ct_counts = np.array(ct_counts)
     
-    # 独立性卡方检验
-    chi2_val, p_val, dof, _ = chi2_contingency(heatmap_matrix)
-    cramers_v = np.sqrt(chi2_val / (heatmap_matrix.sum() * min(len(GENRES_8) - 1, 4 - 1)))
+    # 真实频数表的独立性卡方检验
+    chi2_val, p_val, dof, _ = chi2_contingency(ct_counts)
+    cramers_v = np.sqrt(chi2_val / (ct_counts.sum() * min(len(GENRES_8) - 1, 4 - 1)))
     
     # 绘制单元格（每个单元格用该列色型的代表色，透明度映射百分比）
     for row_idx in range(len(GENRES_8)):
@@ -277,7 +308,7 @@ def render_fig1_spectacular(df_u):
     ax_c.set_yticklabels(GENRES_8, fontsize=9.5, fontweight='bold')
     ax_c.set_xlim(-0.6, 3.6)
     ax_c.set_ylim(-0.6, len(GENRES_8) - 0.4)
-    ax_c.set_title('面板 C：8 大类型在 4 大物理色型中的分布 (每行和=100%)\n(χ² = 2162.1, p < 1e-300)',
+    ax_c.set_title(f'面板 C：8 大类型在 4 大物理色型中的分布 (每行和=100%)\n(χ² = {chi2_val:.1f}, p < 1e-300)',
                    fontsize=10.5, fontweight='bold', pad=12)
     ax_c.invert_yaxis() # 从上到下对应动画->恐怖
 
