@@ -98,7 +98,7 @@ def render_benchmark_dashboard():
 
     print(">>> [3/3] 渲染 4 面板高保真模型选型诊断图 (300 DPI)...")
     fig = plt.figure(figsize=(16.8, 11.2))
-    gs = fig.add_gridspec(2, 2, hspace=0.32, wspace=0.22)
+    gs = fig.add_gridspec(2, 2, hspace=0.38, wspace=0.22)
 
     # -------------------------------------------------------------
     # 面板 A：簇数 k 选型与 Davies-Bouldin 曲线 (越低越好)
@@ -125,6 +125,12 @@ def render_benchmark_dashboard():
                   arrowprops=dict(arrowstyle="->", color='#c53030', lw=1.8),
                   fontsize=9, fontweight='bold', color='#9b2c2c',
                   bbox=dict(boxstyle="round,pad=0.25", fc='#fff5f5', ec='#e53e3e', alpha=0.95))
+
+    # 标注 GMM 越界失效说明（解释虚线截断成因）
+    ax_a.annotate('GMM 失效出界\n(k=5 时 DB=7.78)', xy=(4.18, 4.28), xytext=(4.35, 3.82),
+                  arrowprops=dict(arrowstyle="->", color='#718096', lw=1.2),
+                  fontsize=7.8, color='#4a5568',
+                  bbox=dict(boxstyle="round,pad=0.2", fc='#f7fafc', ec='#cbd5e0', alpha=0.92))
 
     ax_a.set_xticks([3, 4, 5, 6])
     ax_a.set_xlabel('聚类簇数 (k)', fontsize=10.5, fontweight='bold')
@@ -252,8 +258,8 @@ def render_benchmark_dashboard():
     ax_d.set_rgrids([0.25, 0.50, 0.75], labels=['25%', '50%', '75%'], fontsize=7.5, color='#718096')
     ax_d.grid(alpha=0.35, linestyle=':')
     ax_d.legend(loc='upper right', bbox_to_anchor=(1.25, 1.05), fontsize=8.5, framealpha=0.92)
-    ax_d.set_title('面板 D：最优 4 大物理色型多维质心特征雷达图 (HSV 物理色彩剖面)',
-                   fontsize=11.5, fontweight='bold', pad=25)
+    ax_d.set_title('面板 D：最优 4 大物理色型多维质心特征雷达图 (0~100% 分位数归一化)',
+                   fontsize=11.0, fontweight='bold', pad=14)
 
     plt.suptitle('多策略聚类评测基准与最优模型选型证据链 (Clustering Benchmark & Model Selection)',
                  fontsize=14.0, fontweight='bold', y=0.98)

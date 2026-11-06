@@ -142,31 +142,47 @@ def render_fig1_spectacular(df_u):
         
     ax_a.scatter(thetas, radii, c=point_colors, s=12, alpha=0.55, edgecolors='none', zorder=3)
     
-    # 标出 4 个色型的聚类中心与聚集光晕 (严格控制在极坐标盘内四周，防止溢出到面板 B)
-    # 1. 冷光青蓝区 (210°~240°) - 放置在左下角
-    ax_a.annotate('【冷光青蓝区】\n青蓝波段 (225° 聚集)',
-                  xy=(np.radians(225), 0.75), xytext=(np.radians(220), 1.25),
+    # 计算 4 个色型的经验物理质心坐标 (圆均值色相与均值饱和度)
+    centroids = {}
+    for c_id in range(4):
+        c_sub = df_u[df_u['cluster'] == c_id]
+        rad_vals = np.radians(c_sub['hue'])
+        mean_sin = np.sin(rad_vals).mean()
+        mean_cos = np.cos(rad_vals).mean()
+        c_theta = np.arctan2(mean_sin, mean_cos) % (2 * np.pi)
+        c_sat = c_sub['mean_s'].mean()
+        centroids[c_id] = (c_theta, c_sat)
+
+    # 在极坐标星云中显式绘制 4 个质心锚点星标 (代表算法实际收敛中心)
+    for c_id, (cth, csat) in centroids.items():
+        ax_a.scatter([cth], [csat], marker='*', s=260, color=CLUSTER_BASE_COLORS[c_id],
+                     edgecolor='white', lw=1.6, zorder=8)
+
+    # 标出 4 个色型的聚类中心引线 (严格对准实测质心物理坐标)
+    # 1. 冷光青蓝区
+    ax_a.annotate('【冷光青蓝区】\n青蓝波段 (质心 225°)',
+                  xy=(centroids[0][0], centroids[0][1]), xytext=(np.radians(220), 1.25),
                   arrowprops=dict(arrowstyle="->", color='#2b6cb0', lw=1.5),
                   fontsize=8, fontweight='bold', color='#1a365d', ha='center',
                   bbox=dict(boxstyle="round,pad=0.25", fc='#ebf8ff', ec='#3182ce', alpha=0.92))
     
-    # 2. 高饱和艳丽区 (15°~45° 外圈) - 放置在右上角
-    ax_a.annotate('【高饱和艳丽区】\n高浓多彩 (外圈高饱和)',
-                  xy=(np.radians(30), 0.82), xytext=(np.radians(45), 1.28),
+    # 2. 高饱和艳丽区
+    ax_a.annotate('【高饱和艳丽区】\n高浓多彩 (高饱和外圈)',
+                  xy=(centroids[2][0], centroids[2][1]), xytext=(np.radians(45), 1.28),
                   arrowprops=dict(arrowstyle="->", color='#d69e2e', lw=1.5),
                   fontsize=8, fontweight='bold', color='#744210', ha='center',
                   bbox=dict(boxstyle="round,pad=0.25", fc='#fffaf0', ec='#d69e2e', alpha=0.92))
     
-    # 3. 极致暗黑区 (内圈暗黑) - 放置在右下角
-    ax_a.annotate('【极致暗黑区】\n低明度暗核 (极低明度)',
-                  xy=(np.radians(335), 0.30), xytext=(np.radians(315), 1.25),
+    # 3. 极致暗黑区
+    ax_a.annotate('【极致暗黑区】\n低明度暗核 (质心 V=0.28)',
+                  xy=(centroids[1][0], centroids[1][1]), xytext=(np.radians(315), 1.25),
                   arrowprops=dict(arrowstyle="->", color='#2d3748', lw=1.5),
                   fontsize=8, fontweight='bold', color='#1a202c', ha='center',
                   bbox=dict(boxstyle="round,pad=0.25", fc='#f7fafc', ec='#4a5568', alpha=0.92))
     
-    # 4. 高亮通透区 (15°~30° 中低饱和) - 放置在西北角 (135°)
-    ax_a.annotate('【高亮通透区】\n高调亮白 (高明度通透)',
-                  xy=(np.radians(15), 0.45), xytext=(np.radians(135), 1.25),
+    # 4. 高亮通透区
+    ax_a.annotate('【高亮通透区】\n高调亮白 (质心 V=0.74)',
+                  xy=(centroids[3][0], centroids[3][1]), xytext=(np.radians(135), 1.25),
                   arrowprops=dict(arrowstyle="->", color='#e53e3e', lw=1.5),
                   fontsize=8, fontweight='bold', color='#742a2a', ha='center',
                   bbox=dict(boxstyle="round,pad=0.25", fc='#fff5f5', ec='#e53e3e', alpha=0.92))
@@ -179,7 +195,7 @@ def render_fig1_spectacular(df_u):
     ax_a.set_rgrids([0.3, 0.6, 0.9], labels=['S=0.3', 'S=0.6', 'S=0.9'], fontsize=7.5, color='#718096')
     ax_a.set_ylim(0, 1.1)
     ax_a.grid(alpha=0.35, linestyle=':')
-    ax_a.set_title('面板 A：海报极坐标真实色彩流形\n(2,200张真实主色采样 + 4大客观色型聚集区)',
+    ax_a.set_title('面板 A：海报极坐标真实色彩流形\n(2,200张真实主色采样 + 4大色型质心★)',
                    fontsize=10.5, fontweight='bold', pad=25)
 
     # -------------------------------------------------------------
@@ -230,29 +246,45 @@ def render_fig1_spectacular(df_u):
         cold_rate = (shares['h6'] + shares['h7'] + shares['h8']) * 100
         warm_rate = (shares['h0'] + shares['h1'] + shares['h11']) * 100
         
-        # 内部核心特征标注
-        if g == '科幻':
-            ax_b.text(70, i, f'青蓝冷光 {cold_rate:.1f}%', va='center', ha='center',
-                      fontsize=8.5, fontweight='bold', color='white',
-                      bbox=dict(boxstyle="square,pad=0.18", fc='#1a365d', ec='white', lw=0.6, alpha=0.9))
-        elif g == '爱情':
-            ax_b.text(28, i, f'暖红橙调 {warm_rate:.1f}%', va='center', ha='center',
-                      fontsize=8.5, fontweight='bold', color='white',
-                      bbox=dict(boxstyle="square,pad=0.18", fc='#9b2c2c', ec='white', lw=0.6, alpha=0.9))
-        elif g == '恐怖':
-            ax_b.text(78, i, f'极致压抑暗黑 (V={v_med:.2f})', va='center', ha='center',
-                      fontsize=8.5, fontweight='bold', color='white',
-                      bbox=dict(boxstyle="square,pad=0.18", fc='#171923', ec='white', lw=0.6, alpha=0.9))
-        elif g == '动画':
+        # 8 大类型内部核心特征全量精准标注
+        if g == '动画':
             anim_col = sub['colorful'].mean()
             ax_b.text(48, i, f'高彩全色谱 (丰富度 {anim_col:.1f})', va='center', ha='center',
-                      fontsize=8.5, fontweight='bold', color='white',
+                      fontsize=8.0, fontweight='bold', color='white',
                       bbox=dict(boxstyle="square,pad=0.18", fc='#744210', ec='white', lw=0.6, alpha=0.9))
+        elif g == '喜剧':
+            ax_b.text(28, i, f'高调暖橙 {warm_rate:.1f}%', va='center', ha='center',
+                      fontsize=8.0, fontweight='bold', color='white',
+                      bbox=dict(boxstyle="square,pad=0.18", fc='#b7791f', ec='white', lw=0.6, alpha=0.9))
+        elif g == '爱情':
+            ax_b.text(28, i, f'暖红橙调 {warm_rate:.1f}%', va='center', ha='center',
+                      fontsize=8.0, fontweight='bold', color='white',
+                      bbox=dict(boxstyle="square,pad=0.18", fc='#9b2c2c', ec='white', lw=0.6, alpha=0.9))
+        elif g == '剧情':
+            ax_b.text(72, i, f'工业中性写实均衡', va='center', ha='center',
+                      fontsize=8.0, fontweight='bold', color='white',
+                      bbox=dict(boxstyle="square,pad=0.18", fc='#4a5568', ec='white', lw=0.6, alpha=0.9))
+        elif g == '动作':
+            ax_b.text(70, i, f'冷夜金属 {cold_rate:.1f}%', va='center', ha='center',
+                      fontsize=8.0, fontweight='bold', color='white',
+                      bbox=dict(boxstyle="square,pad=0.18", fc='#2c5282', ec='white', lw=0.6, alpha=0.9))
+        elif g == '科幻':
+            ax_b.text(70, i, f'青蓝冷光 {cold_rate:.1f}%', va='center', ha='center',
+                      fontsize=8.0, fontweight='bold', color='white',
+                      bbox=dict(boxstyle="square,pad=0.18", fc='#1a365d', ec='white', lw=0.6, alpha=0.9))
+        elif g == '犯罪':
+            ax_b.text(76, i, f'冷夜深暗 (V={v_med:.2f})', va='center', ha='center',
+                      fontsize=8.0, fontweight='bold', color='white',
+                      bbox=dict(boxstyle="square,pad=0.18", fc='#2d3748', ec='white', lw=0.6, alpha=0.9))
+        elif g == '恐怖':
+            ax_b.text(76, i, f'极致压抑暗黑 (V={v_med:.2f})', va='center', ha='center',
+                      fontsize=8.0, fontweight='bold', color='white',
+                      bbox=dict(boxstyle="square,pad=0.18", fc='#171923', ec='white', lw=0.6, alpha=0.9))
 
     ax_b.set_yticks(y_coords)
     y_tick_labels = [f"{g}\n(n={len(df_u[common.has_genre(df_u, g)]):,})" for g in GENRES_8]
     ax_b.set_yticklabels(y_tick_labels, fontsize=9.5, fontweight='bold')
-    ax_b.set_xlabel('色相扇区物理累积占比 (%)', fontsize=10)
+    ax_b.set_xlabel('色相扇区物理累积占比 (%) (从左至右依次为红橙黄绿青蓝紫)', fontsize=9.5)
     ax_b.set_xlim(0, 100)
     ax_b.set_ylim(-0.6, len(GENRES_8) - 0.4)
     ax_b.invert_yaxis() # 统一顺序：从上到下 动画->喜剧->爱情->剧情->动作->科幻->犯罪->恐怖
@@ -281,25 +313,31 @@ def render_fig1_spectacular(df_u):
     chi2_val, p_val, dof, _ = chi2_contingency(ct_counts)
     cramers_v = np.sqrt(chi2_val / (ct_counts.sum() * min(len(GENRES_8) - 1, 4 - 1)))
     
-    # 绘制单元格（每个单元格用该列色型的代表色，透明度映射百分比）
+    # 绘制单元格（每个单元格用该列色型的代表色，透明度映射百分比，行峰值高亮金边）
     for row_idx in range(len(GENRES_8)):
+        row_vals = heatmap_matrix[row_idx]
+        max_col_idx = np.argmax(row_vals)
         for col_idx in range(4):
-            val = heatmap_matrix[row_idx, col_idx]
+            val = row_vals[col_idx]
             base_col = CLUSTER_BASE_COLORS[col_idx]
             alpha_val = np.clip(val / 46.0, 0.12, 0.95)
+            is_peak = (col_idx == max_col_idx)
             
-            # 画圆角卡片
+            # 画圆角卡片（峰值优势格采用加粗金色描边）
+            edge_color = '#d69e2e' if is_peak else 'white'
+            edge_width = 2.2 if is_peak else 1.0
             rect = patches.FancyBboxPatch((col_idx - 0.44, row_idx - 0.40), 0.88, 0.80,
                                           boxstyle="round,pad=0.04",
                                           facecolor=base_col, alpha=alpha_val,
-                                          edgecolor='white', lw=1.2)
+                                          edgecolor=edge_color, lw=edge_width, zorder=3 if is_peak else 2)
             ax_c.add_patch(rect)
             
-            # 文字对比度适配
+            # 文字对比度适配与峰值星标
             text_color = 'white' if alpha_val >= 0.45 else '#2d3748'
-            font_weight = 'bold' if val >= 30.0 else 'normal'
-            ax_c.text(col_idx, row_idx, f"{val:.1f}%", ha='center', va='center',
-                      fontsize=9, fontweight=font_weight, color=text_color)
+            font_weight = 'bold' if val >= 30.0 or is_peak else 'normal'
+            val_text = f"★{val:.1f}%" if is_peak else f"{val:.1f}%"
+            ax_c.text(col_idx, row_idx, val_text, ha='center', va='center',
+                      fontsize=8.8, fontweight=font_weight, color=text_color, zorder=4)
 
     ax_c.set_xticks(range(4))
     cluster_labels = ['冷光青蓝调\n(青蓝冷色)', '极致暗黑调\n(超低明度)', '高饱和艳丽调\n(鲜明高彩)', '高亮通透调\n(高光白亮)']
@@ -308,7 +346,7 @@ def render_fig1_spectacular(df_u):
     ax_c.set_yticklabels(GENRES_8, fontsize=9.5, fontweight='bold')
     ax_c.set_xlim(-0.6, 3.6)
     ax_c.set_ylim(-0.6, len(GENRES_8) - 0.4)
-    ax_c.set_title(f'面板 C：8 大类型在 4 大物理色型中的分布 (每行和=100%)\n(χ² = {chi2_val:.1f}, p < 1e-300)',
+    ax_c.set_title(f'面板 C：8 大类型在 4 大物理色型中的分布 (每行和=100%)\n(χ² = {chi2_val:.1f}, p < 1e-300, Cramér\'s V = {cramers_v:.3f})',
                    fontsize=10.5, fontweight='bold', pad=12)
     ax_c.invert_yaxis() # 从上到下对应动画->恐怖
 

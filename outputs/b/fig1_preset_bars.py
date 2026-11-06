@@ -150,7 +150,7 @@ def run_preset_analysis():
 
     ax_a.set_xticks(x)
     ax_a.set_xticklabels(SECTOR_NAMES, fontsize=8.5, fontweight='bold')
-    ax_a.set_ylabel('掩膜有效像素占比 (%)', fontsize=10.5, fontweight='bold')
+    ax_a.set_ylabel('海报色彩有效像素占比 (%)', fontsize=10.5, fontweight='bold')
     ax_a.set_ylim(0, 48)
     ax_a.grid(axis='y', alpha=0.25, linestyle=':')
     ax_a.legend(loc='upper right', fontsize=9.5, framealpha=0.95)
@@ -210,16 +210,20 @@ def run_preset_analysis():
     # 标注 Kruskal-Wallis 显著结论
     v_diff = means_v[1] - means_v[2] # 爱情 vs 恐怖
     c_diff = means_c[1] - means_c[2]
+    means_s = [np.mean(subsets[g]['mean_s']) for g in genres_list]
+    s_diff = means_s[1] - means_s[2]
     hv_stat, pv_val = h_stat_dict['mean_v']
     hc_stat, pc_val = h_stat_dict['colorful']
-    kw_text = (f"Kruskal-Wallis 显著性检验：\n"
+    hs_stat, ps_val = h_stat_dict['mean_s']
+    kw_text = (f"Kruskal-Wallis 差异检验：\n"
                f"• 明度差异极显著: H = {hv_stat:.1f} (p < 1e-250)\n"
                f"  爱情比恐怖明度高出 {v_diff:.2f} (大效应量)\n"
                f"• 丰富度差异显著: H = {hc_stat:.1f} (p < 1e-25)\n"
-               f"  爱情丰富度比恐怖高出 {c_diff:.1f}")
-    ax_b.text(0.50, 0.96, kw_text, transform=ax_b.transAxes,
+               f"  爱情丰富度比恐怖高出 {c_diff:.1f}\n"
+               f"• 饱和度差异微弱: H = {hs_stat:.1f} (Δ = {s_diff:+.2f})")
+    ax_b.text(0.57, 0.96, kw_text, transform=ax_b.transAxes,
               verticalalignment='top', horizontalalignment='left',
-              fontsize=8.5, bbox=dict(boxstyle="round,pad=0.4", fc='#f7fafc', ec='#cbd5e0', alpha=0.95))
+              fontsize=8.0, bbox=dict(boxstyle="round,pad=0.3", fc='#f7fafc', ec='#cbd5e0', alpha=0.95))
 
     ax_b.set_title('面板 B：核心特征差异检验\n(Kruskal-Wallis H 检验与 95% 置信区间)',
                    fontsize=11.5, fontweight='bold', pad=12)
