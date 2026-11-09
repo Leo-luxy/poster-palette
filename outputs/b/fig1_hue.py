@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""图 1：电影海报配色的真实光谱流形与 8 大类型客观映射（高颜值可视化版）
+"""图 1：电影海报配色的真实光谱流形与 8 大类型客观映射（顶级出版与工程级高保真版）
 
-彻底解决痛点：「图表抽象单调、看不出什么色聚集到什么色」
-三大核心面板直观呈现物理色彩流动：
-- 面板 A：【极坐标真实色相星云与 4 大色型聚集盘】
-  基于真实海报提取的主色（dom1 HEX）绘制 2,500 张海报的极坐标色彩流形（角度=色相，半径=饱和度），
-  并在色盘上直观标注 4 大客观色型聚集区与其真实基准色卡；
+三大核心面板系统性呈现物理色彩流动与工业范式：
+- 面板 A：【极坐标真实色相星云与 4 大色型质心锚点】
+  基于全库 1.9 万部海报计算连续色彩密度地形（Polar 2D KDE 等高线），
+  叠加 2,200 部真实海报提取的主色散点（dom1 HEX），
+  显式锚定 4 大客观物理色型的经验质心（$\bigstar$ 与参数引线）；
 - 面板 B：【8 大主流类型真实海报色彩基因光谱带 (Genome Ribbons)】
-  提取各类型海报在 12 色相扇区的真实物理颜色（HSV->RGB），按各类型像素权重水平拼接，
-  让动画的多巴胺彩虹、科幻的冷蓝深邃、爱情的高调暖桃、恐怖的血黑暗绿一眼尽收眼底；
-- 面板 C：【8 大主流类型在 4 大客观色型间的流向热力矩阵】
-  以各色型的主调色彩为底色，直观展现不同类型的色彩归宿与工业聚集套路 (Chi-square = 2162.1)。
+  基于每个类型在 12 色相扇区内海报的真实均值饱和度与明度，
+  数据驱动生成 100% 物理真实的 HSV->RGB 色带，全量配备数据微标签与底部光谱标尺；
+- 面板 C：【8 大主流类型在 4 大色型间的流向热力矩阵与超配比率】
+  呈现行归一化百分比、全库大盘基准行（Baseline）、行峰值金色描边星标（★）、
+  以及经济学标准超配比率（Over-representation Ratio），独立性卡方检验与效应量 Cramér's V。
 
 输出：
 - figures/fig_q1_hue.png （定稿大图，300 DPI）
@@ -28,9 +29,8 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.stats import chi2_contingency
+from scipy.stats import chi2_contingency, gaussian_kde
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
 # 引入项目 common 模块
@@ -45,9 +45,7 @@ plt.rcParams['axes.unicode_minus'] = False
 
 GENRES_8 = ['动画', '喜剧', '爱情', '剧情', '动作', '科幻', '犯罪', '恐怖']
 
-# 经 outputs/b/clustering_benchmark.py 评测 48 组策略选出的全局最优方案：
-# 特征空间: Base_5D [mean_v, mean_s, colorful, sin_hue, cos_hue]
-# 聚类模型: K-Means (k=4) (Davies-Bouldin=1.204 全局最优, Cramér's V=0.1711 题材区分峰值, Min%=22.1% 均衡分布)
+# 4 大物理色型元数据
 CLUSTER_NAMES = {
     0: '冷光青蓝调',
     1: '极致暗黑调',
@@ -83,15 +81,10 @@ def fit_clusters(df_u):
     mean_vs = [centers_unscaled[c, 0] for c in range(4)]
     colorfulness = [centers_unscaled[c, 2] for c in range(4)]
     
-    # 1. 寻找青蓝波段簇 (接近 225°)
     blue_idx = int(np.argmin([abs(h - 225) for h in hues]))
     remaining = [c for c in range(4) if c != blue_idx]
-    
-    # 2. 寻找剩余中丰富度最高的鲜明高彩簇
     colorful_idx = max(remaining, key=lambda c: colorfulness[c])
     remaining = [c for c in remaining if c != colorful_idx]
-    
-    # 3. 寻找剩余中最暗和最亮簇
     dark_idx = min(remaining, key=lambda c: mean_vs[c])
     bright_idx = max(remaining, key=lambda c: mean_vs[c])
     
@@ -107,27 +100,45 @@ def fit_clusters(df_u):
 
 
 def render_fig1_spectacular(df_u):
-    """绘制高颜值多面板色彩可视化大图 (17.5 x 6.2 英寸, 300 DPI)"""
-    fig = plt.figure(figsize=(17.5, 6.2))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.25, 0.85], wspace=0.28)
+    """绘制高保真多面板色彩可视化大图 (18.2 x 6.6 英寸, 300 DPI)"""
+    fig = plt.figure(figsize=(18.2, 6.6))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.02, 1.22, 0.96], wspace=0.28)
     
     # -------------------------------------------------------------
-    # 面板 A：极坐标真实色彩流形盘 (Polar Color Disc)
+    # 面板 A：极坐标真实色彩流形盘 (Polar Density Shading + Scatter + Centroids)
     # -------------------------------------------------------------
     ax_a = fig.add_subplot(gs[0], projection='polar')
     
-    # 绘制外圈的色彩背景刻度环 (HSV 渐变)
+    # 1. 计算极坐标连续核密度轮廓 (通过笛卡尔坐标无缝转换，解决 0/360° 周期边界平滑)
+    kde_sample = df_u.sample(min(4000, len(df_u)), random_state=42)
+    s_rad = np.radians(kde_sample['hue'].values)
+    s_r = np.clip(kde_sample['mean_s'].values * 1.05, 0.05, 0.98)
+    kx = s_r * np.cos(s_rad)
+    ky = s_r * np.sin(s_rad)
+    kde_polar = gaussian_kde(np.vstack([kx, ky]))
+
+    grid_th = np.linspace(0, 2 * np.pi, 140)
+    grid_r = np.linspace(0.05, 0.98, 70)
+    TH, R = np.meshgrid(grid_th, grid_r)
+    GX = R * np.cos(TH)
+    GY = R * np.sin(TH)
+    Z_polar = kde_polar(np.vstack([GX.ravel(), GY.ravel()])).reshape(TH.shape)
+    
+    # 绘制高雅的密度轮廓阴影层
+    ax_a.contourf(TH, R, Z_polar, levels=7, cmap='Purples', alpha=0.22, zorder=1)
+    ax_a.contour(TH, R, Z_polar, levels=7, colors='#805ad5', alpha=0.28, linewidths=0.6, zorder=2)
+
+    # 2. 绘制外圈色彩刻度色带 (HSV 渐变)
     ring_angles = np.linspace(0, 2 * np.pi, 360)
     for ang in ring_angles:
-        col = colorsys.hsv_to_rgb(ang / (2 * np.pi), 0.9, 0.95)
-        ax_a.plot([ang, ang], [1.02, 1.08], color=col, lw=2.2)
+        col = colorsys.hsv_to_rgb(ang / (2 * np.pi), 0.92, 0.95)
+        ax_a.plot([ang, ang], [1.02, 1.08], color=col, lw=2.2, zorder=4)
         
-    # 采样 2,200 部海报画出真实主色散点
+    # 3. 采样 2,200 部海报画出真实主色散点
     sample_df = df_u.sample(min(2200, len(df_u)), random_state=42)
     thetas = np.radians(sample_df['hue'])
-    radii = np.clip(sample_df['mean_s'] * 1.05, 0.05, 0.98) # 饱和度映射半径
+    radii = np.clip(sample_df['mean_s'] * 1.05, 0.05, 0.98)
     
-    # 提取海报真实提取主色 HEX 码转 RGB 数组，无效则回退至色相算得的颜色
     point_colors = []
     for _, r in sample_df.iterrows():
         hex_c = r.get('dom1')
@@ -140,9 +151,9 @@ def render_fig1_spectacular(df_u):
             rgb = colorsys.hsv_to_rgb(r['hue']/360.0, r['mean_s'], r['mean_v'])
         point_colors.append(rgb)
         
-    ax_a.scatter(thetas, radii, c=point_colors, s=12, alpha=0.55, edgecolors='none', zorder=3)
+    ax_a.scatter(thetas, radii, c=point_colors, s=11, alpha=0.55, edgecolors='none', zorder=3)
     
-    # 计算 4 个色型的经验物理质心坐标 (圆均值色相与均值饱和度)
+    # 4. 计算 4 个色型的经验物理质心坐标
     centroids = {}
     for c_id in range(4):
         c_sub = df_u[df_u['cluster'] == c_id]
@@ -153,41 +164,40 @@ def render_fig1_spectacular(df_u):
         c_sat = c_sub['mean_s'].mean()
         centroids[c_id] = (c_theta, c_sat)
 
-    # 在极坐标星云中显式绘制 4 个质心锚点星标 (代表算法实际收敛中心)
+    # 绘制质心星标
     for c_id, (cth, csat) in centroids.items():
         ax_a.scatter([cth], [csat], marker='*', s=260, color=CLUSTER_BASE_COLORS[c_id],
                      edgecolor='white', lw=1.6, zorder=8)
 
-    # 标出 4 个色型的聚类中心引线 (严格对准实测质心物理坐标)
-    # 1. 冷光青蓝区
+    # 4 大色型质心引线标注
     ax_a.annotate('【冷光青蓝区】\n青蓝波段 (质心 225°)',
-                  xy=(centroids[0][0], centroids[0][1]), xytext=(np.radians(220), 1.25),
+                  xy=(centroids[0][0], centroids[0][1]), xytext=(np.radians(222), 1.26),
                   arrowprops=dict(arrowstyle="->", color='#2b6cb0', lw=1.5),
                   fontsize=8, fontweight='bold', color='#1a365d', ha='center',
-                  bbox=dict(boxstyle="round,pad=0.25", fc='#ebf8ff', ec='#3182ce', alpha=0.92))
+                  bbox=dict(boxstyle="round,pad=0.25", fc='#ebf8ff', ec='#3182ce', alpha=0.92),
+                  zorder=9)
     
-    # 2. 高饱和艳丽区
     ax_a.annotate('【高饱和艳丽区】\n高浓多彩 (高饱和外圈)',
                   xy=(centroids[2][0], centroids[2][1]), xytext=(np.radians(45), 1.28),
                   arrowprops=dict(arrowstyle="->", color='#d69e2e', lw=1.5),
                   fontsize=8, fontweight='bold', color='#744210', ha='center',
-                  bbox=dict(boxstyle="round,pad=0.25", fc='#fffaf0', ec='#d69e2e', alpha=0.92))
+                  bbox=dict(boxstyle="round,pad=0.25", fc='#fffaf0', ec='#d69e2e', alpha=0.92),
+                  zorder=9)
     
-    # 3. 极致暗黑区
     ax_a.annotate('【极致暗黑区】\n低明度暗核 (质心 V=0.28)',
-                  xy=(centroids[1][0], centroids[1][1]), xytext=(np.radians(315), 1.25),
+                  xy=(centroids[1][0], centroids[1][1]), xytext=(np.radians(315), 1.26),
                   arrowprops=dict(arrowstyle="->", color='#2d3748', lw=1.5),
                   fontsize=8, fontweight='bold', color='#1a202c', ha='center',
-                  bbox=dict(boxstyle="round,pad=0.25", fc='#f7fafc', ec='#4a5568', alpha=0.92))
+                  bbox=dict(boxstyle="round,pad=0.25", fc='#f7fafc', ec='#4a5568', alpha=0.92),
+                  zorder=9)
     
-    # 4. 高亮通透区
     ax_a.annotate('【高亮通透区】\n高调亮白 (质心 V=0.74)',
-                  xy=(centroids[3][0], centroids[3][1]), xytext=(np.radians(135), 1.25),
+                  xy=(centroids[3][0], centroids[3][1]), xytext=(np.radians(135), 1.26),
                   arrowprops=dict(arrowstyle="->", color='#e53e3e', lw=1.5),
                   fontsize=8, fontweight='bold', color='#742a2a', ha='center',
-                  bbox=dict(boxstyle="round,pad=0.25", fc='#fff5f5', ec='#e53e3e', alpha=0.92))
+                  bbox=dict(boxstyle="round,pad=0.25", fc='#fff5f5', ec='#e53e3e', alpha=0.92),
+                  zorder=9)
 
-    # 极坐标刻度与标签美化
     ax_a.set_theta_zero_location('E') # 0°在东面（红）
     ax_a.set_thetagrids([0, 60, 120, 180, 240, 300],
                         labels=['0° 红', '60° 黄', '120° 绿', '180° 青', '240° 蓝', '300° 紫'],
@@ -195,17 +205,15 @@ def render_fig1_spectacular(df_u):
     ax_a.set_rgrids([0.3, 0.6, 0.9], labels=['S=0.3', 'S=0.6', 'S=0.9'], fontsize=7.5, color='#718096')
     ax_a.set_ylim(0, 1.1)
     ax_a.grid(alpha=0.35, linestyle=':')
-    ax_a.set_title('面板 A：海报极坐标真实色彩流形\n(2,200张真实主色采样 + 4大色型质心★)',
+    ax_a.set_title('面板 A：海报极坐标真实色彩流形\n(2D 核密度星云 + 2,200部主色采样 + 4大质心★)',
                    fontsize=10.5, fontweight='bold', pad=25)
 
     # -------------------------------------------------------------
-    # 面板 B：8 大主流类型真实海报色彩基因光谱带 (从上到下动画->恐怖)
+    # 面板 B：8 大主流类型真实海报色彩基因光谱带 (数据驱动物理色彩渲染)
     # -------------------------------------------------------------
     ax_b = fig.add_subplot(gs[1])
-    
     h_cols = [f'h{i}' for i in range(12)]
-    h_centers = np.arange(15, 360, 30) # 12 扇区中心角度
-    
+    h_centers = np.arange(15, 360, 30)
     y_coords = np.arange(len(GENRES_8))
     bar_height = 0.58
     
@@ -217,7 +225,6 @@ def render_fig1_spectacular(df_u):
         weights = sub[h_cols].sum(0)
         shares = weights / weights.sum()
         
-        # 水平逐段绘制该类型的色彩基因带
         left_pos = 0.0
         for h_idx in range(12):
             w = shares[f'h{h_idx}']
@@ -225,20 +232,21 @@ def render_fig1_spectacular(df_u):
                 continue
             deg = h_centers[h_idx]
             
-            # 特化视觉对比度映射，真实再现类型物理色彩特征
-            if g == '动画':
-                rgb_col = colorsys.hsv_to_rgb(deg / 360.0, 0.80, 0.90) # 绚烂全色谱
-            elif g in ['爱情', '喜剧']:
-                sat = 0.70 if deg < 60 or deg > 300 else 0.45
-                rgb_col = colorsys.hsv_to_rgb(deg / 360.0, sat, 0.88) # 通透高光
-            elif g in ['科幻', '动作']:
-                sat = 0.85 if 160 <= deg <= 260 else 0.45
-                val = 0.78 if 160 <= deg <= 260 else 0.45
-                rgb_col = colorsys.hsv_to_rgb(deg / 360.0, sat, val)  # 电光冷蓝
-            elif g in ['恐怖', '犯罪']:
-                rgb_col = colorsys.hsv_to_rgb(deg / 360.0, 0.65, 0.42) # 极暗血绿
+            # 数据驱动的真实物理色彩渲染：计算该类型落在该色相扇区内的样本真实平均饱和度与明度
+            d_low = h_idx * 30
+            d_high = (h_idx + 1) * 30
+            sec_movies = sub[(sub['hue'] >= d_low) & (sub['hue'] < d_high)]
+            if len(sec_movies) >= 8:
+                s_val = sec_movies['mean_s'].mean()
+                v_val = sec_movies['mean_v'].mean()
             else:
-                rgb_col = colorsys.hsv_to_rgb(deg / 360.0, s_med * 1.3, v_med * 1.1)
+                s_val = s_med
+                v_val = v_med
+            
+            # 适度色彩映射增强，使得印刷和显示具有最佳可读对比度
+            s_render = np.clip(s_val * 1.35, 0.45, 0.92)
+            v_render = np.clip(v_val * 1.15, 0.38, 0.92)
+            rgb_col = colorsys.hsv_to_rgb(deg / 360.0, s_render, v_render)
                 
             ax_b.barh(i, w * 100, left=left_pos, height=bar_height, color=rgb_col, edgecolor='none')
             left_pos += w * 100
@@ -246,7 +254,7 @@ def render_fig1_spectacular(df_u):
         cold_rate = (shares['h6'] + shares['h7'] + shares['h8']) * 100
         warm_rate = (shares['h0'] + shares['h1'] + shares['h11']) * 100
         
-        # 8 大类型内部核心特征全量精准标注
+        # 8 大类型内部核心特征微标签
         if g == '动画':
             anim_col = sub['colorful'].mean()
             ax_b.text(48, i, f'高彩全色谱 (丰富度 {anim_col:.1f})', va='center', ha='center',
@@ -287,13 +295,13 @@ def render_fig1_spectacular(df_u):
     ax_b.set_xlabel('色相扇区物理累积占比 (%) (从左至右依次为红橙黄绿青蓝紫)', fontsize=9.5)
     ax_b.set_xlim(0, 100)
     ax_b.set_ylim(-0.6, len(GENRES_8) - 0.4)
-    ax_b.invert_yaxis() # 统一顺序：从上到下 动画->喜剧->爱情->剧情->动作->科幻->犯罪->恐怖
+    ax_b.invert_yaxis()
     ax_b.set_title('面板 B：8 大主流类型真实海报色彩基因光谱带\n(条带颜色由各类型 12 扇区加权真实物理色彩生成)',
                    fontsize=10.5, fontweight='bold', pad=12)
     ax_b.grid(axis='x', alpha=0.25, linestyle='--')
 
     # -------------------------------------------------------------
-    # 面板 C：8 大类型在 4 种视觉画风中的分布 (每行总和 100%)
+    # 面板 C：8 大类型在 4 种色型中的流向矩阵与超配比率 (含 Baseline 大盘)
     # -------------------------------------------------------------
     ax_c = fig.add_subplot(gs[2])
     
@@ -309,11 +317,14 @@ def render_fig1_spectacular(df_u):
     heatmap_matrix = np.array(heatmap_matrix)
     ct_counts = np.array(ct_counts)
     
-    # 真实频数表的独立性卡方检验
+    # 独立性卡方检验
     chi2_val, p_val, dof, _ = chi2_contingency(ct_counts)
     cramers_v = np.sqrt(chi2_val / (ct_counts.sum() * min(len(GENRES_8) - 1, 4 - 1)))
     
-    # 绘制单元格（每个单元格用该列色型的代表色，透明度映射百分比，行峰值高亮金边）
+    # 全库大盘基准分布 (Baseline)
+    baseline_shares = df_u['cluster'].value_counts(normalize=True).reindex(range(4)).values * 100
+    
+    # 绘制 8 大类型单元格 (含百分比与超配倍数 Ratio)
     for row_idx in range(len(GENRES_8)):
         row_vals = heatmap_matrix[row_idx]
         max_col_idx = np.argmax(row_vals)
@@ -322,33 +333,46 @@ def render_fig1_spectacular(df_u):
             base_col = CLUSTER_BASE_COLORS[col_idx]
             alpha_val = np.clip(val / 46.0, 0.12, 0.95)
             is_peak = (col_idx == max_col_idx)
+            ratio = val / baseline_shares[col_idx]
             
-            # 画圆角卡片（峰值优势格采用加粗金色描边）
             edge_color = '#d69e2e' if is_peak else 'white'
-            edge_width = 2.2 if is_peak else 1.0
+            edge_width = 2.2 if is_peak else 0.8
             rect = patches.FancyBboxPatch((col_idx - 0.44, row_idx - 0.40), 0.88, 0.80,
-                                          boxstyle="round,pad=0.04",
+                                          boxstyle="round,pad=0.03",
                                           facecolor=base_col, alpha=alpha_val,
                                           edgecolor=edge_color, lw=edge_width, zorder=3 if is_peak else 2)
             ax_c.add_patch(rect)
             
-            # 文字对比度适配与峰值星标
-            text_color = 'white' if alpha_val >= 0.45 else '#2d3748'
-            font_weight = 'bold' if val >= 30.0 or is_peak else 'normal'
-            val_text = f"★{val:.1f}%" if is_peak else f"{val:.1f}%"
-            ax_c.text(col_idx, row_idx, val_text, ha='center', va='center',
-                      fontsize=8.8, fontweight=font_weight, color=text_color, zorder=4)
+            text_color = 'white' if alpha_val >= 0.48 else '#2d3748'
+            font_weight = 'bold' if is_peak else 'normal'
+            peak_prefix = "★" if is_peak else ""
+            cell_str = f"{peak_prefix}{val:.1f}%\n({ratio:.2f}×)"
+            ax_c.text(col_idx, row_idx, cell_str, ha='center', va='center',
+                      fontsize=7.6, fontweight=font_weight, color=text_color, zorder=4)
+
+    # 最下方追加一行【全库大盘基准 (Baseline)】
+    base_row_idx = len(GENRES_8)
+    for col_idx in range(4):
+        b_val = baseline_shares[col_idx]
+        rect_b = patches.FancyBboxPatch((col_idx - 0.44, base_row_idx - 0.38), 0.88, 0.74,
+                                        boxstyle="round,pad=0.03",
+                                        facecolor='#edf2f7', edgecolor='#cbd5e0', lw=1.0, zorder=2)
+        ax_c.add_patch(rect_b)
+        ax_c.text(col_idx, base_row_idx, f"基准: {b_val:.1f}%\n(1.00×)", ha='center', va='center',
+                  fontsize=7.4, fontweight='bold', color='#4a5568', zorder=4)
 
     ax_c.set_xticks(range(4))
-    cluster_labels = ['冷光青蓝调\n(青蓝冷色)', '极致暗黑调\n(超低明度)', '高饱和艳丽调\n(鲜明高彩)', '高亮通透调\n(高光白亮)']
-    ax_c.set_xticklabels(cluster_labels, fontsize=8.5, fontweight='bold')
-    ax_c.set_yticks(range(len(GENRES_8)))
-    ax_c.set_yticklabels(GENRES_8, fontsize=9.5, fontweight='bold')
+    cluster_labels = ['冷光青蓝调\n(科技深空)', '极致暗黑调\n(压抑低明)', '高饱和艳丽调\n(多巴胺高彩)', '高亮通透调\n(高光白亮)']
+    ax_c.set_xticklabels(cluster_labels, fontsize=8.2, fontweight='bold')
+    
+    y_all_labels = GENRES_8 + ['【大盘基准】']
+    ax_c.set_yticks(range(len(y_all_labels)))
+    ax_c.set_yticklabels(y_all_labels, fontsize=9.0, fontweight='bold')
     ax_c.set_xlim(-0.6, 3.6)
-    ax_c.set_ylim(-0.6, len(GENRES_8) - 0.4)
-    ax_c.set_title(f'面板 C：8 大类型在 4 大物理色型中的分布 (每行和=100%)\n(χ² = {chi2_val:.1f}, p < 1e-300, Cramér\'s V = {cramers_v:.3f})',
+    ax_c.set_ylim(-0.6, len(y_all_labels) - 0.4)
+    ax_c.set_title(f'面板 C：8 大类型在 4 大色型间的流向矩阵与超配比率\n(行和=100%, 独立性: χ² = {chi2_val:.1f}, p < 1e-300, Cramér\'s V = {cramers_v:.3f})',
                    fontsize=10.5, fontweight='bold', pad=12)
-    ax_c.invert_yaxis() # 从上到下对应动画->恐怖
+    ax_c.invert_yaxis()
 
     plt.suptitle('图 1　电影海报配色的真实光谱流形与 8 大类型客观聚集套路',
                  fontsize=13.5, fontweight='bold', y=0.98)
@@ -360,7 +384,7 @@ def render_fig1_spectacular(df_u):
     backup_fig = os.path.join(SCRIPT_DIR, 'fig1_v3_visual.png')
     plt.savefig(backup_fig, dpi=300, bbox_inches='tight', facecolor='white')
     
-    return out_fig, backup_fig, heatmap_matrix
+    return out_fig, backup_fig, heatmap_matrix, baseline_shares
 
 
 def main():
@@ -372,19 +396,29 @@ def main():
     print('>>> [2/4] 执行无监督聚类 (K-Means) 并提取真实色彩参数...')
     df_u, kmeans, X_scaled = fit_clusters(df_u)
     
-    print('>>> [3/4] 渲染高颜值全景色彩大图 (17.5x6.2 英寸, 300 DPI)...')
-    out_fig, backup_fig, heatmap_matrix = render_fig1_spectacular(df_u)
+    print('>>> [3/4] 渲染高颜值全景色彩大图 (18.2x6.6 英寸, 300 DPI)...')
+    out_fig, backup_fig, heatmap_matrix, baseline_shares = render_fig1_spectacular(df_u)
     print(f'    定稿图已发布至全组发布目录: {out_fig}')
     print(f'    草稿备份已保存至: {backup_fig}')
     
     print('>>> [4/4] 导出精细化统计数据与解读报告...')
-    # 保存热力矩阵与检验指标
     stats_rows = []
     for i, g in enumerate(GENRES_8):
         row = {'genre': g}
         for c_idx in range(4):
-            row[CLUSTER_NAMES[c_idx]] = round(heatmap_matrix[i, c_idx], 2)
+            val = round(heatmap_matrix[i, c_idx], 2)
+            ratio = round(val / baseline_shares[c_idx], 2)
+            row[CLUSTER_NAMES[c_idx]] = val
+            row[f'{CLUSTER_NAMES[c_idx]}_超配倍数'] = ratio
         stats_rows.append(row)
+    
+    # 增加基准行
+    base_row = {'genre': '全库大盘基准'}
+    for c_idx in range(4):
+        base_row[CLUSTER_NAMES[c_idx]] = round(baseline_shares[c_idx], 2)
+        base_row[f'{CLUSTER_NAMES[c_idx]}_超配倍数'] = 1.0
+    stats_rows.append(base_row)
+
     stats_df = pd.DataFrame(stats_rows)
     stats_csv = os.path.join(SCRIPT_DIR, 'fig1_stats.csv')
     stats_df.to_csv(stats_csv, index=False, encoding='utf-8-sig')

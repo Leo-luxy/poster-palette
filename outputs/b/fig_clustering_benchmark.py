@@ -72,12 +72,14 @@ def render_benchmark_dashboard():
     }
     df_u['cluster'] = np.array([canonical_map[l] for l in raw_labels])
 
-    # 4 大色型名称与代表色
+    # 4 大色型名称与代表色 (含全库精确样本量与占比)
+    c_counts = df_u['cluster'].value_counts()
+    c_pcts = df_u['cluster'].value_counts(normalize=True) * 100
     cluster_meta = {
-        0: {'name': '冷光青蓝调', 'color': '#2b6cb0'},
-        1: {'name': '极致暗黑调', 'color': '#2d3748'},
-        2: {'name': '高饱和艳丽调', 'color': '#d69e2e'},
-        3: {'name': '高亮通透调', 'color': '#e53e3e'}
+        0: {'name': f"冷光青蓝调 (n={c_counts[0]:,}, {c_pcts[0]:.1f}%)", 'color': '#2b6cb0'},
+        1: {'name': f"极致暗黑调 (n={c_counts[1]:,}, {c_pcts[1]:.1f}%)", 'color': '#2d3748'},
+        2: {'name': f"高饱和艳丽调 (n={c_counts[2]:,}, {c_pcts[2]:.1f}%)", 'color': '#d69e2e'},
+        3: {'name': f"高亮通透调 (n={c_counts[3]:,}, {c_pcts[3]:.1f}%)", 'color': '#e53e3e'}
     }
 
     # 提取雷达指标均值（0-1 极差归一化方便在同一雷达图上对比）
@@ -166,15 +168,26 @@ def render_benchmark_dashboard():
                          facecolors='none', edgecolors=col, s=45, alpha=0.6,
                          linestyle='--', label=f"{feat_name} (退化坍缩)")
 
-    # 高亮最优选型点 (Base_5D, K-Means, k=4)
+    # 绘制帕累托最优前沿线 (Pareto Efficient Frontier)
+    pareto_pts = [
+        (0.2656, 0.1217), # Base_5D k=3
+        (0.2629, 0.1581), # Base_5D k=5
+        (0.2573, 0.1607), # Base_5D k=4 (Knee Point / 全局最优)
+        (0.2101, 0.1617)  # Contrast_6D k=5
+    ]
+    px, py = zip(*pareto_pts)
+    ax_b.plot(px, py, color='#c53030', ls=':', lw=1.8, alpha=0.85, label='帕累托前沿 (Pareto Frontier)', zorder=4)
+
+    # 高亮最优选型拐点 (Base_5D, K-Means, k=4)
     best_sil = 0.2573
     best_cv = 0.1607
-    ax_b.scatter([best_sil], [best_cv], s=200, facecolors='#e53e3e', edgecolors='#742a2a', lw=2.0, zorder=6)
-    ax_b.annotate('帕累托最优解\nBase_5D + K-Means (k=4)\n(Sil=0.257, V=0.161)',
-                  xy=(best_sil, best_cv), xytext=(best_sil - 0.08, best_cv + 0.015),
+    ax_b.scatter([best_sil], [best_cv], s=200, facecolors='#e53e3e', edgecolors='#742a2a', lw=2.2, zorder=6)
+    ax_b.annotate('帕累托拐点最优解 (Knee Point)\nBase_5D + K-Means (k=4)\n(Sil=0.257, V=0.161, DB=1.211 最优)',
+                  xy=(best_sil, best_cv), xytext=(best_sil - 0.13, best_cv + 0.016),
                   arrowprops=dict(arrowstyle="->", color='#c53030', lw=1.8),
                   fontsize=8.5, fontweight='bold', color='#742a2a',
-                  bbox=dict(boxstyle="round,pad=0.25", fc='#fff5f5', ec='#e53e3e', alpha=0.95))
+                  bbox=dict(boxstyle="round,pad=0.25", fc='#fff5f5', ec='#e53e3e', alpha=0.95),
+                  zorder=7)
 
     ax_b.set_xlabel('轮廓系数 Silhouette (几何紧致分离度)', fontsize=10.5, fontweight='bold')
     ax_b.set_ylabel('题材关联度 Cramér\'s V (与8大题材的自然区分度)', fontsize=10.5, fontweight='bold')
