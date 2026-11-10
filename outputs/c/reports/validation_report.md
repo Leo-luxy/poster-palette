@@ -54,10 +54,20 @@
 - [x] outputs/c/ppt/fig_q4_hue.png 存在
 - [x] outputs/c/ppt/fig_q4_metrics.png 存在
 - [x] 国家报告图 300 dpi
+- [x] fig_q2_comparisons.png 存在且为 300 dpi
+- [x] fig_q4_comparisons.png 存在且为 300 dpi
+- [x] fig_q2_hue.png 存在
 - [x] fig_q2_hue.png 为 16:9
+- [x] fig_q2_metrics.png 存在
 - [x] fig_q2_metrics.png 为 16:9
+- [x] fig_q4_hue.png 存在
 - [x] fig_q4_hue.png 为 16:9
+- [x] fig_q4_metrics.png 存在
 - [x] fig_q4_metrics.png 为 16:9
+- [x] fig_q2_palettes.png 存在
+- [x] fig_q2_palettes.png 为 16:9
+- [x] fig_q4_palettes.png 存在
+- [x] fig_q4_palettes.png 为 16:9
 - [x] 配色图覆盖八年代与七组
 - [x] 每组一张示例且来自对应样本
 - [x] 示例海报指纹与色彩比例

@@ -57,8 +57,12 @@ def main():
         for f in ['figures/c/fig_q4_country.png','outputs/c/ppt/fig_q4_hue.png','outputs/c/ppt/fig_q4_metrics.png']:
             check(f+' 存在',(ROOT/f).exists())
         if (ROOT/'figures/c/fig_q4_country.png').exists(): check('国家报告图 300 dpi',abs(Image.open(ROOT/'figures/c/fig_q4_country.png').info['dpi'][0]-300)<1)
-    for name in (['fig_q2_hue.png','fig_q2_metrics.png'] + (['fig_q4_hue.png','fig_q4_metrics.png'] if args.stage=='all' else [])):
+        for name in ['fig_q2_comparisons.png','fig_q4_comparisons.png']:
+            path=ROOT/'figures'/'c'/name
+            check(name+' 存在且为 300 dpi',path.exists() and abs(Image.open(path).info['dpi'][0]-300)<1)
+    for name in (['fig_q2_hue.png','fig_q2_metrics.png'] + (['fig_q4_hue.png','fig_q4_metrics.png','fig_q2_palettes.png','fig_q4_palettes.png'] if args.stage=='all' else [])):
         path=OUT/'ppt'/name
+        check(name+' 存在',path.exists())
         if path.exists():
             w,h=Image.open(path).size; check(name+' 为 16:9',w*9==h*16)
     palette_path=TABLES/'palette_examples.csv'

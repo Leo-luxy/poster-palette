@@ -73,22 +73,23 @@ def abstract_poster(id):
         output=np.asarray(palette[:21],dtype=np.uint8).reshape(7,3)[simplified]
         return Image.fromarray(output),colors,shares
 
-def draw(rows,dimension):
-    fig=plt.figure(figsize=(13,11),layout='constrained')
-    grid=fig.add_gridspec(2,4)
+def draw(rows,dimension,ppt=False):
+    fig=plt.figure(figsize=(16,9) if ppt else (13,11),layout=None if ppt else 'constrained')
+    grid=fig.add_gridspec(2,4,left=.04,right=.96,bottom=.10,top=.84,wspace=.16,hspace=.20) if ppt else fig.add_gridspec(2,4)
     title='全球各上映年代海报的典型配色组合' if dimension=='time' else '各国家/地区组电影海报的典型配色组合'
-    fig.suptitle(title if dimension=='time' else title+'\n2001-2025',fontsize=16,fontweight='bold')
+    fig.suptitle(title if dimension=='time' else title+'\n2001-2025',fontsize=21 if ppt else 16,fontweight='bold')
     for i,r in enumerate(rows):
         ax=fig.add_subplot(grid[i//4,i%4]); ax.axis('off')
         group=r['group']
         label=('2020—2025' if group=='2020' else group+'年代') if dimension=='time' else NAMES[group]
-        ax.set_title(label,fontsize=12,loc='left',pad=7)
+        ax.set_title(label,fontsize=16 if ppt else 12,loc='left',pad=7)
         image,_,_=abstract_poster(r['id'])
         ax.imshow(image,interpolation='nearest',aspect='equal')
     if len(rows)<8: fig.add_subplot(grid[1,3]).axis('off')
-    fig.supxlabel('每幅图基于该组一张海报简化其主要色彩区域，不代表组内全部海报。',fontsize=10,color='#5c6268')
-    target=ROOT/'figures'/'c'; target.mkdir(parents=True,exist_ok=True)
-    fig.savefig(target/('fig_q2_palettes.png' if dimension=='time' else 'fig_q4_palettes.png'),dpi=300)
+    note_options={'y':.025} if ppt else {}
+    fig.supxlabel('每幅图简化自该组一张海报，不代表组内全部海报。',fontsize=13 if ppt else 10,color='#5c6268',**note_options)
+    target=OUT/'ppt' if ppt else ROOT/'figures'/'c'; target.mkdir(parents=True,exist_ok=True)
+    fig.savefig(target/('fig_q2_palettes.png' if dimension=='time' else 'fig_q4_palettes.png'),dpi=150 if ppt else 300)
     plt.close(fig)
 
 def main():
@@ -105,6 +106,6 @@ def main():
               'selection_hue_min_sat_frac':.10,'crop_bottom_fraction':.12,'quantized_colors':7,'source_blur_sigma':6,'region_smoothing_sigma':3,'grid_columns':8,'grid_rows':10,'minimum_component_cells':3,'layout':'square-edged simplified poster colour fields',
               'posters_sha256':{str(r['id']):r['poster_sha256'] for r in time+country},'input_manifest':'run_manifest.json'}
     (OUT/'palette_manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-    draw(time,'time'); draw(country,'country')
+    draw(time,'time'); draw(country,'country'); draw(time,'time',ppt=True); draw(country,'country',ppt=True)
     print('Completed 8 decade and 7 country abstract poster palettes.')
 if __name__=='__main__': main()

@@ -1,6 +1,6 @@
 # C：海报配色的时间与国家／地区分析
 
-本目录收纳代码、计划、统计表、解读和 PPT 图面。报告图位于仓库的 `figures/c/`：`fig_q2_trend.png`、`fig_q4_country.png` 是统计组合图；`fig_q2_palettes.png`、`fig_q4_palettes.png` 是年代及国家／地区的抽象色块拼接图。
+本目录收纳代码、计划、统计表、解读和 PPT 图面。报告图位于仓库的 `figures/c/`：`fig_q2_trend.png`、`fig_q4_country.png` 是统计组合图；`fig_q2_palettes.png`、`fig_q4_palettes.png` 是年代及国家／地区的典型海报抽象配色图；`fig_q2_comparisons.png`、`fig_q4_comparisons.png` 展示预定均值差和区间。
 
 ```text
 outputs/c/
@@ -15,5 +15,7 @@ outputs/c/
 ```
 
 建议从 [时间结论](reports/时间结论.md)、[国家结论](reports/国家结论.md) 和 [PPT 讲述建议](ppt/讲述建议.md) 查看成果；完整数据表在 `tables/`。可复现步骤见 [复现说明](reports/复现说明.md)，检查结果见 [验收报告](reports/validation_report.md)。
+
+想了解数据处理、时间与国家分析方法以及图表的读法，可以先读 [项目实现与结果解读](项目实现与结果解读.md)。
 
 `docs/` 中的执行计划保留其制定时的内容，里面的文件路径属于整理前的历史约定；当前目录结构和运行命令以本文件及复现说明为准。
