@@ -1,0 +1,122 @@
+{
+  "input_sha256": {
+    "movies.csv": "71cb7535d477b553b9a76ed4f1afe73724241584a9f57be7a41116e727ffda08",
+    "color_features.csv": "ab55664a6383642a7af5d203ae98d5ab2f6c1dc3ab99ae4ba8043ecf68c55ec7",
+    "movie_details.csv": "ae7ed448cfdb1097e920f6a89faae366411ceb79043b7c283816b57f8c639e0c",
+    "yearly.csv": "38c57e03753bc894e260bb13c0edb86f3c2ab562ac25c66110a5e8e043d1cc0b"
+  },
+  "git_commit": "75d08d8997b0c2bca2994854d4270c72121de00b",
+  "git_status_short": "D outputs/c/push_check.md\n?? .vscode/settings.json\n?? figures/fig_q2_trend.png\n?? figures/fig_q4_country.png\n?? outputs/c/README.md\n?? outputs/c/docs/push_check.md\n?? \"outputs/c/docs/\\346\\211\\247\\350\\241\\214\\350\\256\\241\\345\\210\\222\\347\\256\\200\\346\\230\\216\\350\\257\\264\\346\\230\\216.md\"\n?? \"outputs/c/docs/\\346\\234\\200\\347\\273\\210\\346\\211\\247\\350\\241\\214\\350\\256\\241\\345\\210\\222.md\"\n?? outputs/c/ppt/fig_q2_hue.png\n?? outputs/c/ppt/fig_q2_metrics.png\n?? outputs/c/ppt/fig_q4_hue.png\n?? outputs/c/ppt/fig_q4_metrics.png\n?? \"outputs/c/ppt/\\350\\256\\262\\350\\277\\260\\345\\273\\272\\350\\256\\256.md\"\n?? outputs/c/reports/validation_report.md\n?? \"outputs/c/reports/\\345\\233\\275\\345\\256\\266\\347\\273\\223\\350\\256\\272.md\"\n?? \"outputs/c/reports/\\345\\244\\215\\347\\216\\260\\350\\257\\264\\346\\230\\216.md\"\n?? \"outputs/c/reports/\\346\\227\\266\\351\\227\\264\\347\\273\\223\\350\\256\\272.md\"\n?? outputs/c/run_manifest.json\n?? outputs/c/scripts/c01_country_group.py\n?? outputs/c/scripts/c02_time.py\n?? outputs/c/scripts/c03_country.py\n?? outputs/c/scripts/c99_validate.py\n?? outputs/c/scripts/c_common.py\n?? outputs/c/scripts/c_plot.py\n?? outputs/c/tables/assignment_summary.csv\n?? outputs/c/tables/assignment_summary_2001_2025.csv\n?? outputs/c/tables/contrasts.csv\n?? outputs/c/tables/country_format_issues.csv\n?? outputs/c/tables/country_group.csv\n?? outputs/c/tables/country_summary.csv\n?? outputs/c/tables/hue_invalid_country.csv\n?? outputs/c/tables/hue_invalid_time.csv\n?? outputs/c/tables/hue_sectors.csv\n?? outputs/c/tables/hue_summary.csv\n?? outputs/c/tables/metric_audit.csv\n?? outputs/c/tables/missing_details.csv\n?? outputs/c/tables/missing_features.csv\n?? outputs/c/tables/orphan_features.csv\n?? outputs/c/tables/sample_support.csv\n?? outputs/c/tables/time_decade.csv\n?? outputs/c/tables/time_trend.csv\n?? outputs/c/tables/time_yearly.csv",
+  "software": {
+    "python": "3.14.0 (tags/v3.14.0:ebf955d, Oct  7 2025, 10:15:03) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "pandas": "3.0.5",
+    "numpy": "2.5.1",
+    "scipy": "1.18.0",
+    "matplotlib": "3.11.1"
+  },
+  "config": {
+    "seed": 42,
+    "bootstrap_iterations": 1000,
+    "time_years": [
+      1950,
+      2025
+    ],
+    "country_years": [
+      2001,
+      2025
+    ],
+    "groups": [
+      "US",
+      "GB",
+      "FR",
+      "IT",
+      "JP",
+      "ZH",
+      "KR"
+    ],
+    "sat_frac_min": 0.1,
+    "language_candidates": {
+      "en": [
+        "AU",
+        "CA",
+        "GB",
+        "IE",
+        "NZ",
+        "US"
+      ],
+      "fr": [
+        "BE",
+        "CA",
+        "CH",
+        "FR",
+        "LU"
+      ],
+      "it": [
+        "CH",
+        "IT"
+      ],
+      "de": [
+        "AT",
+        "CH",
+        "DE"
+      ],
+      "es": [
+        "AR",
+        "CL",
+        "CO",
+        "CU",
+        "ES",
+        "MX",
+        "PE",
+        "UY"
+      ],
+      "zh": [
+        "CN",
+        "HK",
+        "TW"
+      ],
+      "cn": [
+        "CN",
+        "HK",
+        "TW"
+      ],
+      "ja": [
+        "JP"
+      ],
+      "ko": [
+        "KR"
+      ],
+      "hi": [
+        "IN"
+      ],
+      "ru": [
+        "RU",
+        "SU"
+      ],
+      "pt": [
+        "BR",
+        "PT"
+      ],
+      "sv": [
+        "SE"
+      ],
+      "da": [
+        "DK"
+      ],
+      "no": [
+        "NO"
+      ],
+      "pl": [
+        "PL"
+      ]
+    },
+    "primary": {
+      "en": "US",
+      "fr": "FR",
+      "it": "IT",
+      "de": "DE"
+    }
+  },
+  "run_utc": "2026-11-10T10:52:11.202648+00:00"
+}

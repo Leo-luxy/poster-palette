@@ -1,0 +1,5 @@
+metric,n_valid,n_missing_or_nonfinite,n_out_of_range,min,max
+mean_v,19694,0,0,0.0109,0.9917
+mean_s,19694,0,0,0.0,0.9887
+colorful,19694,0,0,0.0,196.09
+sat_frac,19694,0,0,0.0,1.0

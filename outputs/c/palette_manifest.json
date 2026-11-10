@@ -1,0 +1,4 @@
+{
+  "method": "dark_value_lt_0.20, neutral_saturation_lt_0.20, otherwise 12 HSV hue sectors; observed color nearest weighted RGB center",
+  "upstream_feature_manifest": "run_manifest.json"
+}
