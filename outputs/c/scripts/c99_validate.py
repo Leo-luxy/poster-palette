@@ -1,5 +1,6 @@
 ﻿import argparse
 import numpy as np
+import hashlib
 import pandas as pd
 from PIL import Image
 from c_common import ROOT, OUT, TABLES, load_safe, GROUPS, METRICS, assign, contrast
@@ -37,9 +38,9 @@ def main():
     for row in ct[ct.dimension=='time'].itertuples():
         a=x[x.decade==int(row.group_a)]; b=x[x.decade==int(row.group_b)]; calc=contrast(a,b,row.metric)
         check(f'时间差值及区间可复现：{row.group_a}-{row.group_b} {row.metric}', all(np.isclose(getattr(row,k),calc[k]) for k in ['n_a','n_b','mean_difference','ci_low','ci_high']))
-    for f in ['figures/fig_q2_trend.png','outputs/c/ppt/fig_q2_hue.png','outputs/c/ppt/fig_q2_metrics.png']:
+    for f in ['figures/c/fig_q2_trend.png','outputs/c/ppt/fig_q2_hue.png','outputs/c/ppt/fig_q2_metrics.png']:
         check(f+' 存在', (ROOT/f).exists())
-    if (ROOT/'figures/fig_q2_trend.png').exists(): check('时间报告图 300 dpi',abs(Image.open(ROOT/'figures/fig_q2_trend.png').info['dpi'][0]-300)<1)
+    if (ROOT/'figures/c/fig_q2_trend.png').exists(): check('时间报告图 300 dpi',abs(Image.open(ROOT/'figures/c/fig_q2_trend.png').info['dpi'][0]-300)<1)
     if args.stage=='all':
         s=pd.read_csv(TABLES/'country_summary.csv'); hc=hs[hs.dimension=='country']; recent=cg[cg.year.between(2001,2025)]
         check('七组样本量与归属一致',s.country_main.tolist()==GROUPS and all(int(s.set_index('country_main').loc[g,'n_total'])==int((recent.country_main==g).sum()) for g in GROUPS))
@@ -53,20 +54,21 @@ def main():
             check(f'国家差值及区间可复现：{row.group_a}-{row.group_b} {row.metric}', all(np.isclose(getattr(row,k),calc[k]) for k in ['n_a','n_b','mean_difference','ci_low','ci_high']))
         support=pd.read_csv(TABLES/'sample_support.csv')
         check('低样本国家年代格保留并标记', (support.low_n==(support.n<30)).all() and all(int(r.n)==int(((recent.country_main==r.country_main)&(recent.decade==r.decade)).sum()) for r in support.itertuples()))
-        for f in ['figures/fig_q4_country.png','outputs/c/ppt/fig_q4_hue.png','outputs/c/ppt/fig_q4_metrics.png']:
+        for f in ['figures/c/fig_q4_country.png','outputs/c/ppt/fig_q4_hue.png','outputs/c/ppt/fig_q4_metrics.png']:
             check(f+' 存在',(ROOT/f).exists())
-        if (ROOT/'figures/fig_q4_country.png').exists(): check('国家报告图 300 dpi',abs(Image.open(ROOT/'figures/fig_q4_country.png').info['dpi'][0]-300)<1)
+        if (ROOT/'figures/c/fig_q4_country.png').exists(): check('国家报告图 300 dpi',abs(Image.open(ROOT/'figures/c/fig_q4_country.png').info['dpi'][0]-300)<1)
     for name in (['fig_q2_hue.png','fig_q2_metrics.png'] + (['fig_q4_hue.png','fig_q4_metrics.png'] if args.stage=='all' else [])):
         path=OUT/'ppt'/name
         if path.exists():
             w,h=Image.open(path).size; check(name+' 为 16:9',w*9==h*16)
-    palette_path=TABLES/'palette_summary.csv'
+    palette_path=TABLES/'palette_examples.csv'
     if palette_path.exists():
         palette=pd.read_csv(palette_path,dtype={'group':str})
         check('配色图覆盖八年代与七组',palette.loc[palette.dimension=='time','group'].nunique()==8 and set(palette.loc[palette.dimension=='country','group'])==set(GROUPS))
-        check('配色汇总权重及有效样本数',np.allclose(palette.groupby(['dimension','group']).share.sum(),1) and (palette.n_palette+palette.n_excluded_palette==palette.n_total).all())
+        check('每组一张示例且来自对应样本',not palette.duplicated(['dimension','group']).any() and all(((x.id==r.id)&(x.decade==int(r.group))).any() if r.dimension=='time' else ((joined.id==r.id)&joined.year.between(2001,2025)&(joined.country_main==r.group)).any() for r in palette.itertuples()))
+        check('示例海报指纹与色彩比例',all((ROOT/'data'/'posters'/f'{r.id}.jpg').is_file() and hashlib.sha256((ROOT/'data'/'posters'/f'{r.id}.jpg').read_bytes()).hexdigest()==r.poster_sha256 for r in palette.itertuples()) and np.allclose(palette[[f'share{i}' for i in range(1,8)]].sum(axis=1),1))
         for f in ['fig_q2_palettes.png','fig_q4_palettes.png']:
-            path=ROOT/'figures'/f
+            path=ROOT/'figures'/'c'/f
             check(f+' 存在且为 300 dpi',path.exists() and abs(Image.open(path).info['dpi'][0]-300)<1)
     lines=['# C 阶段验收报告','',f'阶段：{args.stage}','','逐项自动检查：','']+[f"- [{'x' if ok else ' '}] {label}" for label,ok in results]
     lines+=['','说明：丰富度上游年度表仅保留两位小数，使用 ±0.005 核对；明度和饱和度使用 0.0001。','自动检查不替代图面目视检查或跨团队模板核对。']

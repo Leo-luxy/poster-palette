@@ -39,7 +39,9 @@ def make(dim):
         stats=pd.read_csv(TABLES/'country_summary.csv').set_index('country_main').loc[GROUPS].reset_index(); draw=metric_country; title='电影海报配色的国家／地区差异'; subtitle='2001—2025 · 色相排除近灰海报；点和区间为均值及逐项 95% CI'
     fig=plt.figure(figsize=(12,10),layout='constrained'); gs=fig.add_gridspec(2,3,height_ratios=[1.15,1]); ax=fig.add_subplot(gs[0,:]); hue(ax,rows,labels)
     for i,m in enumerate(METRICS): draw(fig.add_subplot(gs[1,i]),m,stats)
-    fig.suptitle(title+'\n'+subtitle,fontsize=14,fontweight='bold'); path=ROOT/'figures'/('fig_q2_trend.png' if dim=='time' else 'fig_q4_country.png'); fig.savefig(path,dpi=300); plt.close(fig)
+    target=ROOT/'figures'/'c'; target.mkdir(parents=True,exist_ok=True)
+    heading=title
+    fig.suptitle(heading,fontsize=14,fontweight='bold'); path=target/('fig_q2_trend.png' if dim=='time' else 'fig_q4_country.png'); fig.savefig(path,dpi=300); plt.close(fig)
     (OUT/'ppt').mkdir(exist_ok=True)
     with plt.rc_context({'font.size':17, 'axes.titlesize':19, 'axes.labelsize':17, 'xtick.labelsize':15, 'ytick.labelsize':15}):
         period='1950—2025' if dim=='time' else '2001—2025'

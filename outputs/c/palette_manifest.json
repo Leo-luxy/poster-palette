@@ -1,4 +1,30 @@
 {
-  "method": "dark_value_lt_0.20, neutral_saturation_lt_0.20, otherwise 12 HSV hue sectors; observed color nearest weighted RGB center",
-  "upstream_feature_manifest": "run_manifest.json"
+  "selection": "mean squared IQR-scaled distance to group metric medians + squared hue total variation distance to group mean; ties by id",
+  "selection_hue_min_sat_frac": 0.1,
+  "crop_bottom_fraction": 0.12,
+  "quantized_colors": 7,
+  "source_blur_sigma": 6,
+  "region_smoothing_sigma": 3,
+  "grid_columns": 8,
+  "grid_rows": 10,
+  "minimum_component_cells": 3,
+  "layout": "square-edged simplified poster colour fields",
+  "posters_sha256": {
+    "82113": "c422d28b487e728d83a40faad705f3bdbf28d3b08a31283a3cb8dcb36a9f22a2",
+    "41225": "86bf52747cda3902da8f059c5fb9abe8ec7a282ca8ccd5134e129f62287cb40c",
+    "26332": "5056b378f054747632986b1730936d6cba03f3f5fa99048ad16a0d354d95bcbb",
+    "21923": "d1c868987adb0283a0e924313e8c6731991e1375f82b2b9c53ff3b2737bc8535",
+    "21452": "77a077ea8a5a186bab543978c8a0e9c774a2f2b0f523ea0dddbd280eeacb9c20",
+    "7916": "ebfe98f872222e5ac0e247a930f4e3f5b10e5c3448de2e97fda597a9e8b206d9",
+    "366170": "c882f49bf193c1eed1b69d1eea5c7b7a69aa1be57f9fb1206281886739567d74",
+    "1018228": "3a09a367319bf7d027403effc1ca8c8fbe378bbfb3d11f631f97145f3372cf8a",
+    "779782": "dd0ebdb914646cc51f1df0b29fdafda8d197d70f36ed47f0debd6a171fde7b8c",
+    "1103825": "d6c291bbe32ee77b3c9b15b68e6119570ef2cd3fca82e83f56303a3d468dc3a4",
+    "329809": "fe50b96badc0f7fef5ecdb119bfca807d65b672e1a70be22f9a9c6e95312e499",
+    "175116": "582066469b835fb2ba6a8fec84b2ca0114bd7181e01a97f646dd6321de9dabd5",
+    "373879": "a33dd24ca6037eb94840cce4f0fbe8ac56cea3050651fa3141db4d043f515880",
+    "1155281": "9db56b4fc155ae06cf0d03292a6d0897af037785a679579e847fbd32f3410d77",
+    "1131759": "659380d0bc6d2ad0c60c32fb4e8c283043e54bf9b6ce629d40202bc9c3bbe8f4"
+  },
+  "input_manifest": "run_manifest.json"
 }
