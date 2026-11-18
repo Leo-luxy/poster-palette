@@ -1,0 +1,142 @@
+{
+  "config": {
+    "seed": 42,
+    "bootstrap_repeats": 1000,
+    "crop_bottom": 0.12,
+    "image_size_wh": [
+      120,
+      160
+    ],
+    "image_resample": "BICUBIC",
+    "heatmap_size_wh": [
+      45,
+      64
+    ],
+    "pair_min_s": 0.2,
+    "pair_min_v": 0.2,
+    "pair_min_secondary_share": 0.05,
+    "hue_pixel_min_s": 0.2,
+    "hue_min_fraction": 0.1,
+    "warmth_anchor_deg": 30,
+    "warmth_alternatives_deg": [
+      15,
+      45
+    ],
+    "center_area_fraction": 0.5,
+    "vivid_min_s": 0.7,
+    "vivid_min_v": 0.5,
+    "group_period_min_n": 30,
+    "country_reference_policy": "group_equal",
+    "country_pca_policy": "group_equal_weighted_svd",
+    "country_comparisons": "all_pairs",
+    "convergence_summary_metric": "global_heterogeneity_index",
+    "groups": [
+      "FR",
+      "GB",
+      "IT",
+      "JP",
+      "KR",
+      "US",
+      "ZH"
+    ],
+    "base_features": [
+      "mean_v",
+      "mean_s",
+      "colorful",
+      "v_std",
+      "pair_delta_e76",
+      "center_edge_v",
+      "top_bottom_v",
+      "left_right_delta_e76",
+      "vivid_frac"
+    ],
+    "extended_features": [
+      "mean_v",
+      "mean_s",
+      "colorful",
+      "v_std",
+      "pair_delta_e76",
+      "center_edge_v",
+      "top_bottom_v",
+      "left_right_delta_e76",
+      "vivid_frac",
+      "pair_hue_gap_deg",
+      "warmth_30"
+    ]
+  },
+  "input_sha256": {
+    "data/movies.csv": "71cb7535d477b553b9a76ed4f1afe73724241584a9f57be7a41116e727ffda08",
+    "data/color_features.csv": "ab55664a6383642a7af5d203ae98d5ab2f6c1dc3ab99ae4ba8043ecf68c55ec7",
+    "data/movie_details.csv": "ae7ed448cfdb1097e920f6a89faae366411ceb79043b7c283816b57f8c639e0c",
+    "outputs/c/tables/country_group.csv": "b36fb3d14e386e2c71fc9fd9dbba2c817bad76749de724275852db42e5723e27"
+  },
+  "git_commit": "b6160f4d8b7fd985868495f381b3426c9e613cac",
+  "git_status": "M outputs/c/README.md\n?? .vscode/settings.json\n?? \"outputs/c/docs/\\347\\216\\260\\346\\234\\211\\346\\225\\260\\346\\215\\256\\345\\210\\206\\346\\236\\220\\345\\215\\207\\347\\272\\247\\346\\226\\271\\346\\241\\210.md\"\n?? outputs/c/scripts/c06_relations.py\n?? outputs/c/scripts/c_adv_common.py\n?? outputs/c/scripts/c_adv_config.json",
+  "software": {
+    "python": "3.14.0 (tags/v3.14.0:ebf955d, Oct  7 2025, 10:15:03) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.1",
+    "pandas": "3.0.5",
+    "scipy": "1.18.0",
+    "matplotlib": "3.11.1",
+    "Pillow": "12.3.0",
+    "scikit-learn": "1.9.0"
+  },
+  "created_utc": "2026-11-18T12:01:22.741311+00:00",
+  "stages": {
+    "c06": {
+      "rows": 19694,
+      "invalid_color": 160,
+      "invalid_shares": 0,
+      "pair_hue_valid": 8475,
+      "pair_delta_e_valid": 19478,
+      "warmth_valid": 19072
+    },
+    "c07_smoke": {
+      "rows": 100,
+      "failures": 0
+    },
+    "c07_full": {
+      "rows": 19694,
+      "failures": 0
+    },
+    "c08": {
+      "rows": 19694,
+      "metrics": 24,
+      "failures": 0
+    },
+    "c09": {
+      "complete_cases": {
+        "base_time": 19478,
+        "base_country": 10042,
+        "extended_time": 8337,
+        "extended_country": 4168
+      },
+      "excluded_complete_case": {
+        "base_time": 216,
+        "base_country": 73,
+        "extended_time": 11357,
+        "extended_country": 5947
+      }
+    }
+  },
+  "code_sha256": {
+    "outputs/c/scripts/c06_relations.py": "6fbbc4ce3678040e6f3e105178879ab4e8158aa01f71bc0791dfaaace3e14df8",
+    "outputs/c/scripts/c07_spatial.py": "ce3a8c672a199c44dee5c5a97ec128f99618cd714a8c42def52d33889ecacfd2",
+    "outputs/c/scripts/c08_distributions.py": "fb18ceb4f7c7dfb0bf870a2b8de512fa832df3be40553b2ba58ca9e1f3d450d0",
+    "outputs/c/scripts/c09_synthesis.py": "5617e3f8f40886fad17d92bc712c4944dc1f375a51c1d9f21e897b34b5ea7f41",
+    "outputs/c/scripts/c99_validate.py": "a6e49e12f37988b6f3c89601ebc3abf5df18ee4b34d869b88597b0c3d062d570",
+    "outputs/c/scripts/c_adv_checks.py": "a6e2883397c33809ef9dae499e97f8285dbf4b02201ca21c1ddf917a276f1d31",
+    "outputs/c/scripts/c_adv_common.py": "617024333702df95a240f85791b7622b84582ca43bed53226ace051f57402248",
+    "outputs/c/scripts/c_adv_finalize.py": "6235bf14e43ca4e4ede48e497117bb3ff58adc0d2fae86e773c1382dd6be8261",
+    "outputs/c/scripts/c_adv_plot.py": "49c27cb6afd2b51c6203e135fe769fb81dc6d80d5ceeec4cb3f4f6d11937e5a8",
+    "outputs/c/scripts/c_adv_plot_extra.py": "1de30fb72e087b634e269773b094872131ce61f0bcadd76709531bbead5bcc33",
+    "outputs/c/scripts/c_adv_publish.py": "2219bf07a0a1e94ba7e79340b466dcaf053966beefe409634dd8b7ba5782244f",
+    "outputs/c/scripts/c_adv_reproducibility.py": "c4dc16acb2abe40d5b4b219d4524fccff622980be44ec46ab71650574f625103",
+    "outputs/c/scripts/c_adv_validate.py": "b92fd7a15f09d4e61727d417d0198afe5347cf937e6701c1b7063b6b642e7d6f",
+    "outputs/c/scripts/c_legacy_check.py": "3b557a3c9f844db0f6bc82d994cd1318e05d231af73dfb8b7bdb14e7c5b9664e",
+    "outputs/c/scripts/test_advanced_synthetic.py": "91ed5ebf89b74b231038f599675423f50ff4b4d937d95456667e7fe4709c7413",
+    "outputs/c/scripts/c_adv_config.json": "2263d543cfa9f153f786aff4ac7179a015201b0e08e8cb6c37367646e161d8f4"
+  },
+  "completed_utc": "2026-11-18T12:38:26.119961+00:00"
+}

@@ -1,0 +1,7 @@
+feature_set,period,common_genres,global_heterogeneity_index,ci_low,ci_high,valid_replicates,method
+base,2001-2010,18|35|53|80,0.565467792652307,0.47825025158861467,1.2603452286658543,1000,equal_common_genre_mixture_multilabel
+base,2011-2020,18|35|53|80,0.5562410203377816,0.4457569196231107,1.0300370287154648,1000,equal_common_genre_mixture_multilabel
+base,2021-2025,18|35|53|80,0.3498049417071102,,,993,equal_common_genre_mixture_multilabel
+extended,2001-2010,18|35,,,,0,equal_common_genre_mixture_multilabel
+extended,2011-2020,18|35,,,,0,equal_common_genre_mixture_multilabel
+extended,2021-2025,18|35,,,,0,equal_common_genre_mixture_multilabel

@@ -1,0 +1,65 @@
+{
+  "seed": 42,
+  "bootstrap_repeats": 1000,
+  "crop_bottom": 0.12,
+  "image_size_wh": [
+    120,
+    160
+  ],
+  "image_resample": "BICUBIC",
+  "heatmap_size_wh": [
+    45,
+    64
+  ],
+  "pair_min_s": 0.2,
+  "pair_min_v": 0.2,
+  "pair_min_secondary_share": 0.05,
+  "hue_pixel_min_s": 0.2,
+  "hue_min_fraction": 0.1,
+  "warmth_anchor_deg": 30,
+  "warmth_alternatives_deg": [
+    15,
+    45
+  ],
+  "center_area_fraction": 0.5,
+  "vivid_min_s": 0.7,
+  "vivid_min_v": 0.5,
+  "group_period_min_n": 30,
+  "country_reference_policy": "group_equal",
+  "country_pca_policy": "group_equal_weighted_svd",
+  "country_comparisons": "all_pairs",
+  "convergence_summary_metric": "global_heterogeneity_index",
+  "groups": [
+    "FR",
+    "GB",
+    "IT",
+    "JP",
+    "KR",
+    "US",
+    "ZH"
+  ],
+  "base_features": [
+    "mean_v",
+    "mean_s",
+    "colorful",
+    "v_std",
+    "pair_delta_e76",
+    "center_edge_v",
+    "top_bottom_v",
+    "left_right_delta_e76",
+    "vivid_frac"
+  ],
+  "extended_features": [
+    "mean_v",
+    "mean_s",
+    "colorful",
+    "v_std",
+    "pair_delta_e76",
+    "center_edge_v",
+    "top_bottom_v",
+    "left_right_delta_e76",
+    "vivid_frac",
+    "pair_hue_gap_deg",
+    "warmth_30"
+  ]
+}

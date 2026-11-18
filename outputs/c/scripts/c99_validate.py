@@ -6,7 +6,12 @@ from PIL import Image
 from c_common import ROOT, OUT, TABLES, load_safe, GROUPS, METRICS, assign, contrast
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--stage',choices=['time','all'],required=True); args=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--stage',choices=['time','all','advanced'],required=True); p.add_argument('--run-id'); args=p.parse_args()
+    if args.stage=='advanced':
+        if not args.run_id: p.error('--run-id is required for advanced validation')
+        from c_adv_validate import validate
+        validate(args.run_id)
+        return
     results=[]
     def check(label,condition):
         results.append((label,bool(condition)))

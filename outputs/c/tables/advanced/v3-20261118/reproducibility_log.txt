@@ -1,0 +1,21 @@
+c08_distributions.py: exit 0
+
+
+c09_synthesis.py: exit 0
+
+
+group_summary.csv: match
+tail_thresholds.csv: match
+tail_shares.csv: match
+advanced_contrasts.csv: match
+country_deviation_bootstrap.csv: match
+lab_mean_bootstrap.csv: match
+pca_scores.csv: match
+pca_loadings.csv: match
+pca_variance.csv: match
+pairwise_period_distance.csv: match
+convergence_summary.csv: match
+convergence_bootstrap.csv: match
+cluster_stability.csv: match
+genre_adjusted_summary.csv: match
+REPRODUCIBLE: YES

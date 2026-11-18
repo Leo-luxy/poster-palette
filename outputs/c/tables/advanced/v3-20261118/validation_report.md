@@ -1,0 +1,100 @@
+# Advanced validation
+
+- [x] file manifest.json
+- [x] file relations.csv
+- [x] file cooccurrence.csv
+- [x] file spatial_features.csv
+- [x] file image_audit.csv
+- [x] file spatial_maps.npz
+- [x] file spatial_maps_index.csv
+- [x] file group_summary.csv
+- [x] file tail_thresholds.csv
+- [x] file tail_shares.csv
+- [x] file advanced_contrasts.csv
+- [x] file standardization_reference.csv
+- [x] file country_reference_weights.csv
+- [x] file lab_mean_bootstrap.csv
+- [x] file coverage.csv
+- [x] file pca_scores.csv
+- [x] file pca_loadings.csv
+- [x] file pca_variance.csv
+- [x] file scaler.json
+- [x] file pca_reference_weights.csv
+- [x] file period_support.csv
+- [x] file pairwise_period_distance.csv
+- [x] file pairwise_period_matrices.npz
+- [x] file convergence_summary.csv
+- [x] file convergence_bootstrap.csv
+- [x] file cluster_stability.csv
+- [x] file artifact_index.csv
+- [x] file spot_check_selection.csv
+- [x] file spot_check_audit.csv
+- [x] file spatial_map_residuals.npz
+- [x] file cooccurrence_top_pairs.csv
+- [x] figure fig_q2_relations.png
+- [x] 300 dpi fig_q2_relations.png
+- [x] figure fig_q4_relations.png
+- [x] 300 dpi fig_q4_relations.png
+- [x] figure fig_q2_spatial.png
+- [x] 300 dpi fig_q2_spatial.png
+- [x] figure fig_q4_spatial.png
+- [x] 300 dpi fig_q4_spatial.png
+- [x] figure fig_q2_distributions.png
+- [x] 300 dpi fig_q2_distributions.png
+- [x] figure fig_q4_distributions.png
+- [x] 300 dpi fig_q4_distributions.png
+- [x] figure fig_q2_fingerprint.png
+- [x] 300 dpi fig_q2_fingerprint.png
+- [x] figure fig_q4_fingerprint.png
+- [x] 300 dpi fig_q4_fingerprint.png
+- [x] figure fig_q4_convergence.png
+- [x] 300 dpi fig_q4_convergence.png
+- [x] figure fig_q2_q4_warmth.png
+- [x] 300 dpi fig_q2_q4_warmth.png
+- [x] figure fig_spot_check_cards.png
+- [x] 300 dpi fig_spot_check_cards.png
+- [x] figure fig_q2_q4_contrasts_forest.png
+- [x] 300 dpi fig_q2_q4_contrasts_forest.png
+- [x] relations covers unique baseline IDs
+- [x] spatial covers unique baseline IDs
+- [x] cooccurrence sums
+- [x] tail shares sum to one
+- [x] equal-group deviations sum to zero
+- [x] input fingerprints unchanged
+- [x] recorded code fingerprints unchanged
+- [x] one-to-one feature joins and independent time/country sample sizes
+- [x] spatial failures retained with IDs
+- [x] country metric reference weights are seven equal groups
+- [x] country PCA reference weights each group 1/7
+- [x] PCA country group mean scores centered
+- [x] PCA explained variance sums to one
+- [x] all saved PCA scores equal the standardized projection
+- [x] all 21 country pairs per metric
+- [x] all 105 unordered 14-class cells per group
+- [x] cooccurrence country reference equals mean of seven group probabilities
+- [x] joint country bootstrap uses the seven means from each same replicate
+- [x] country deviation intervals use joint bootstrap
+- [x] warmth validity matches raw hue and saturation rules
+- [x] hue-pair validity implies delta-E validity
+- [x] fixed time and equal-group thresholds reproducible
+- [x] tails use fixed thresholds and valid denominators
+- [x] equal-group spatial residual mean zero v
+- [x] equal-group spatial residual mean zero s
+- [x] fixed top eight plus other sum to one by decade
+- [x] top eight pairs fixed globally with deterministic category tie-break
+- [x] spot selection has eight deterministic extremes and twelve audited random movies
+- [x] extreme card selection and tie-breaking reproducible
+- [x] random card audit selection reproducible
+- [x] Lab bootstrap uses shared joint sample count
+- [x] forest estimates and intervals share the fixed reference SD
+- [x] period support and threshold match complete cases
+- [x] weighted SVD variance matches weighted covariance
+- [x] group label permutation preserves spectrum and pairwise aggregate
+- [x] bias-corrected pair estimates and symmetric matrices
+- [x] heterogeneity uses 21 complete pairs only
+- [x] summary CI comes from joint bootstrap replicates
+- [x] PPT exports are 16:9
+- [x] legacy scripts and both validation stages pass in isolated copy
+- [x] synthetic tests passed
+- [x] bootstrap reproducibility verified
+- [x] visual review completed
