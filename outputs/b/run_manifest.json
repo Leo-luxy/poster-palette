@@ -1,0 +1,50 @@
+{
+  "input_sha256": {
+    "movies.csv": "71cb7535d477b553b9a76ed4f1afe73724241584a9f57be7a41116e727ffda08",
+    "color_features.csv": "ab55664a6383642a7af5d203ae98d5ab2f6c1dc3ab99ae4ba8043ecf68c55ec7",
+    "movie_details.csv": "ae7ed448cfdb1097e920f6a89faae366411ceb79043b7c283816b57f8c639e0c",
+    "yearly.csv": "38c57e03753bc894e260bb13c0edb86f3c2ab562ac25c66110a5e8e043d1cc0b"
+  },
+  "git_commit": "b6160f4d8b7fd985868495f381b3426c9e613cac",
+  "software": {
+    "python": "3.11.8 (tags/v3.11.8:db85d51, Feb  6 2024, 22:03:32) [MSC v.1937 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.17.0",
+    "scikit_learn": "1.8.0",
+    "matplotlib": "3.10.8"
+  },
+  "config": {
+    "seed": 42,
+    "bootstrap_iterations": 1000,
+    "bootstrap_unit": "joint_movie_level_resampling",
+    "sat_frac_min": 0.1,
+    "min_cell": 30,
+    "preset_genres": [
+      "科幻",
+      "爱情",
+      "恐怖"
+    ],
+    "main_genres": [
+      "喜剧",
+      "动画",
+      "爱情",
+      "剧情",
+      "动作",
+      "犯罪",
+      "科幻",
+      "惊悚",
+      "恐怖"
+    ],
+    "cluster_feature_space": "Conic_5D [mean_v, mean_s, colorful, mean_s*cos(hue), mean_s*sin(hue)]",
+    "cluster_k": 4,
+    "cluster_names": {
+      "0": "明亮浅调",
+      "1": "浓烈暖调",
+      "2": "青蓝冷调",
+      "3": "深暗低彩"
+    }
+  },
+  "run_utc": "2026-11-18T03:05:23.055734+00:00"
+}

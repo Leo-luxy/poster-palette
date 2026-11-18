@@ -1,0 +1,27 @@
+{
+  "selection": "mean squared IQR-scaled distance to group metric medians + squared hue TVD to group mean (non-animation genres exclude multi-tagged animation films); ties by id",
+  "selection_hue_min_sat_frac": 0.1,
+  "crop_bottom_fraction": 0.12,
+  "quantizer": "KMeans(n_clusters=7, seed=42, n_init=10) after sigma=1.0 anti-aliasing",
+  "region_smoothing_sigma": 2.6,
+  "grid_columns": 10,
+  "grid_rows": 14,
+  "minimum_component_cells": 2,
+  "swatch_bar": "proportional 7-color horizontal barcode beneath each 14x10 mosaic",
+  "posters_sha256": {
+    "39451": "3dfb1446c5710a776c4e091885e39f67732beb3b51560dd42f9a04cb5504ec8c",
+    "79735": "c4db8a5492d90b132796e93e796f33eb7e0253de2dc220364ccc34953a5f632f",
+    "13457": "67b05a1a7dd5b14b6c4d4e235806712907c217815fd4269b5af0fa72e7a614ef",
+    "13819": "8d27d11ad226180ce7b1196d829d2d29d528fd298de700c83cff56911e07d344",
+    "16406": "933a31da765c4ee91b84165bd396eed85fc075dbd3e2c676effa20664b2a763d",
+    "39106": "68e86b2e064a54e31253c8af814da431dd5d62ca8964cccf397aa0c90b8419a4",
+    "17483": "151c9b3d66bc7f34990ad07c5fefd8c261803f747c4fbf68d7f7a42ea30a257a",
+    "1082424": "604b4eb8e37724959b2f604d76091eb7d4dd180ee4cb0974befae9accdca72f9",
+    "240483": "245ff370069e4d2221343b27cd94057af755b94177dbd168c4941e3659aca096",
+    "1018228": "3a09a367319bf7d027403effc1ca8c8fbe378bbfb3d11f631f97145f3372cf8a",
+    "615678": "c8d016c525332467f59217614a6e7c2ddd668945ed9f71d5f8e13bec89283d51",
+    "552178": "63554b2d1b855431f2b1a9b5e9d70403ba7a22a28548ce9c427bad6e7b873a0e",
+    "28691": "c4d0ca3964b9a03c56e67c54d6326e55d972c62b22d43b05fd2735eb94a41a3b"
+  },
+  "input_manifest": "run_manifest.json"
+}
