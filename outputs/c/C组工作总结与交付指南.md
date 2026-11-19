@@ -1,0 +1,101 @@
+# C 组工作总结与交付指南：海报配色的时间演变与国家差异
+
+> **负责人**：C（时间维度 Q2 + 空间／国家维度 Q4）
+> **数据基线**：v2 数据集（1950–2025 年，19,694 部有配色特征的原语言版电影海报）
+> **文档用途**：供组内成员（尤其是负责统稿与 PPT 的 D 组）快速了解 C 组的方法口径、核心结论、图表选型与解释边界。
+
+---
+
+## 一、核心结论速览（供摘要、引言与答辩使用）
+
+### 1. 时间维度（Q2：1950–2025，全球 19,694 部）
+
+- **整体走向：变暗、转冷、主辅色反差收敛，并在 1970s→1980s 出现最明显的历史台阶。**
+  - 2010 年代相对 1950 年代：平均明度下降 **0.071**（0.600 → 0.530），平均饱和度微降 **0.019**（0.412 → 0.394），色彩丰富度下降 **16.88**（73.89 → 57.00）。
+  - **冷暖转折**：色相分布中 0°–60°（红橙黄）平均占比由 1950s 的 **58.6%** 降至 2010s 的 **47.8%**；180°–240°（青蓝）由 **17.4%** 升至 **27.7%**。30° 余弦冷暖投影在 1950s–1970s 稳定在 ~0.43，1975–1985 年间陡降至 ~0.22，2010s–2020s 进一步降至 ~0.18。
+  - **主辅色搭配变化**：有色像素前两大簇的色差 $\Delta E_{76}$ 均值下降 **14.72**；1950s–1960s 常见的「红橙 + 红黄」（`h0+h0`, `h0+h1`）高明暖调组合显著减少，1980s 后「暗色 + 红橙／青蓝」组合成为主流。
+- **并非单调变灰**：2020–2025 年相对 2010s，明度继续下探（−0.036），但**饱和度明显反弹（+0.042）**，说明近年数字海报走的是「暗底 + 高饱和局部」路线，而不是一路变灰。
+- **空间构图演进**：相比早期海报，2000s 以后的海报「中心亮、四周暗」（`center_edge_v` +0.029）和「上亮下暗」（`top_bottom_v` +0.064）更突出，左右色差 $\Delta E_{76}$ 下降（−3.60），构图更趋对称与中心聚焦。
+
+### 2. 国家／地区维度（Q4：2001–2025，七组 10,115 部）
+
+- **宏观格局：「欧洲亮暖、东亚暗冷、美英居中」，韩国组辨识度最高。**
+  - 以美国组（$n=7,349$，明度 0.519、饱和度 0.416）为参照：
+    - **法国**（$n=976$）、**意大利**（$n=448$）平均明度分别高 **+0.060**、**+0.072**，色彩丰富度高 **+4.60**、**+5.27**，主辅色色差 $\Delta E_{76}$ 高 **+2.63**、**+4.24**；
+    - **日本**（$n=409$）明度高 **+0.047**、丰富度高 **+3.25**，但饱和度低 **−0.036**，且冷色占比更高（0°–60° 暖色仅 37.5%，低于美国的 48.4%）；
+    - **华语组**（$n=195$）明度低 **−0.051**、丰富度低 **−7.64**；
+    - **韩国**（$n=216$）在明度（**−0.077**）、饱和度（**−0.103**）、丰富度（**−22.41**）和主辅色色差（**−11.27**）上均为七组最低，「低饱和暗黑冷调」特征极强。
+- **空间构图残差**：扣除七组等权平均后，法、意全幅偏亮；日本与法国底部亮色更重；韩国与华语组外围大幅压暗，但**中心相对外围的明度差（`center_edge_v`）显著高于欧日**（华语组比法国高 +0.055），呈典型的「暗黑背景 + 中心人物高光」构图。
+- **2020 年代跨国配色趋近**：在 9 维基础特征空间中，七组 21 对的偏差校正平方距离均值从 `2001–2010` 的 **1.111** 降至 `2011–2020` 的 **0.988**，再到 `2021–2025` 的 **0.354**。控制在各期都有充足样本的四大共有类型（剧情、喜剧、惊悚、犯罪）后，距离同样从 **0.565** 降至 **0.350**，说明各国海报在 2020 年代呈现明显的宏观趋同。
+
+---
+
+## 二、样本、归属与统计口径（写进报告「方法」部分）
+
+| 口径项 | 具体约定 | 为什么这么做 |
+| --- | --- | --- |
+| **分析单位** | 每部电影占 1 票；图像预处理沿用全组统一的「裁去底部 12% + 缩放至 120×160」 | 底部 12% 多为演职员表小字；按电影等权避免大尺寸图占更高权重 |
+| **时间样本** | 1950–2025 年全部 **19,694 部**有配色特征的电影（保留 20 部缺国家信息的电影） | 时间趋势是全球样本属性，不应因缺国家字段而丢弃影片 |
+| **国家样本** | 仅取 **2001–2025 年**，固定比较七组：**美国 (7,349)、法国 (976)、英国 (522)、意大利 (448)、日本 (409)、韩国 (216)、华语组 (195)**，共 **10,115 部** | 2000 年前亚洲国家样本极少（如 CN/KR < 15 部），强行跨 75 年比较会把「年代差异」混入「国家差异」 |
+| **合拍片归属** | 单一国家直接归组；中国大陆/香港/台湾合为**华语组 (ZH)**；多国合拍用 `original_language` 与参与国官方语言匹配（唯一匹配归该国；英语合拍有美归美、有法语归法等）；无法判定的标为 `AMBIG`（2.99%）排除 | 约 29% 影片为合拍，其中英、加、德与美合拍 95% 以上是英语好莱坞片；若简单重复计入各国，欧洲组会被美国样本严重稀释 |
+| **七组等权参照** | 国家多维画像、PCA、空间残差均以**七组各占 1/7 权重**构造共同参照（`ALL7_EQUAL`），不按电影数加权 | 美国占 10,115 部中的 72.7%，若按电影等权，全局均值几乎等于美国均值 |
+| **色相闸门** | 色相分布与冷暖投影仅纳入 `sat_frac ≥ 0.10` 的海报；先逐片归一，再对电影等权平均 | 排除近乎纯灰黑的海报噪声 |
+| **不确定性** | 电影级有放回 Bootstrap 重采样 1,000 次（`seed=42`），报告 2.5%–97.5% 百分位区间 | 所有区间均为**逐项 95% CI**，以效应量幅度陈述结论，不靠 p 值显著性硬凑故事 |
+
+---
+
+## 三、图表清单与选型建议（供 D 组统稿与做 PPT）
+
+C 组共生成两层图表：**基线图表**（最简洁直观，适合做主报告与 PPT 主干）与**增量深度图表**（适合作为深化分析页或附录支撑）。所有图片均为中文标签、300 dpi（PPT 版为 16:9），且已去除冗余图面小字。
+
+### 1. 报告与 PPT 必选主图（基线层）
+
+| 维度 | 报告图 (`figures/c/`) | 对应 PPT 16:9 图 (`outputs/c/ppt/`) | 图面内容与一句话结论 |
+| --- | --- | --- | --- |
+| **时间 Q2** | [fig_q2_trend.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q2_trend.png) | [fig_q2_hue.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q2_hue.png) + [fig_q2_metrics.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q2_metrics.png) | 上：8 个年代 12 色相构成；下：明度/饱和度/丰富度五年滑动中位数与片间 IQR 带。**结论：1970s 后由亮暖转向暗冷，2020s 饱和度回升。** |
+| **时间 Q2** | [fig_q2_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q2_palettes.png) | [fig_q2_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q2_palettes.png) | 每个年代挑 1 张最接近组内中位数的代表海报，抽象成 8×10 连续色块。**用途：给观众直观的年代色彩印象（注意说明是单片示例）。** |
+| **时间 Q2** | [fig_q2_comparisons.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q2_comparisons.png) | — | `2010s − 1950s` 与 `2020–2025 − 2010s` 的三指标均值差及 95% CI。 |
+| **国家 Q4** | [fig_q4_country.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q4_country.png) | [fig_q4_hue.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q4_hue.png) + [fig_q4_metrics.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q4_metrics.png) | 上：七国色相构成；下：七国三指标均值与 95% CI。**结论：法意日偏亮高丰富度，中韩偏暗，韩国饱和度与丰富度最低。** |
+| **国家 Q4** | [fig_q4_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q4_palettes.png) | [fig_q4_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q4_palettes.png) | 七国各 1 张中心代表海报的抽象色块图。 |
+| **国家 Q4** | [fig_q4_comparisons.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q4_comparisons.png) | — | 六组分别减美国组的均值差森林图。 |
+
+### 2. 深度加分图表（增量层 `figures/c/advanced/v3-20261118/`，建议挑 2–4 张进报告）
+
+| 推荐优先级 | 图件路径 | 对应 PPT 图 (`outputs/c/ppt/advanced/v3-20261118/`) | 适合讲什么故事 |
+| --- | --- | --- | --- |
+| ⭐⭐⭐ | [fig_q2_q4_warmth.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_q4_warmth.png) | [warmth_trend.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/advanced/v3-20261118/warmth_trend.png) | 上：1950–2025 冷暖投影曲线（15°/30°/45° 三轴一致）；下：七国在 Lab $(b^*, a^*)$ 色度平面的均值与 95% 置信椭圆。**一眼看清 1975–1985 的冷暖大转折，以及日韩偏冷蓝、法意华语偏暖黄红的分离。** |
+| ⭐⭐⭐ | [fig_q4_convergence.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_convergence.png) | [convergence.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/advanced/v3-20261118/convergence.png) | 七国 21 对在 `2001–2010`、`2011–2020`、`2021–2025` 三期的多维距离折线与距离矩阵热力图。**展示 2020 年代各国海报风格的快速趋近。** |
+| ⭐⭐⭐ | [fig_q4_spatial.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_spatial.png) | — | 七国 64×45 像素级明度/饱和度均值热力图、相对七组等权参照的**残差图**，以及上下/左右构图中心。**视觉冲击力强，能看到东亚海报「外暗内亮」与欧洲「通透全亮」的空间对比。**（时间版见 [fig_q2_spatial.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_spatial.png)） |
+| ⭐⭐ | [fig_spot_check_cards.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_spot_check_cards.png) | — | 8 张真实极值海报（中心亮、边缘亮、左右异色、高主辅色差）+ 裁切框/九宫格 + 底部三主色条。**放在「方法」章节解释空间与主辅色指标的物理意义最合适。** |
+| ⭐⭐ | [fig_q2_fingerprint.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_fingerprint.png) / [fig_q4_fingerprint.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_fingerprint.png) | — | 9 项特征标准化画像热力图 + 加权 PCA 投射 + 层次聚类树（1950–1970 与 1980–2025 自然二分；韩国单独成支，美英华语一簇，意法日一簇）。 |
+| ⭐ | [fig_q2_relations.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_relations.png) / [fig_q4_relations.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_relations.png) | — | 14 类（`暗色 + 低饱和 + h0..h11`）无序主辅色共现残差矩阵、前八大色对堆叠柱状图与 $\Delta E_{76}$ 箱线图。 |
+| ⭐ | [fig_q2_q4_contrasts_forest.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_q4_contrasts_forest.png) | — | 9 宫格标准化效应量森林图（以参照分布 SD 为单位，把不同量纲的 6 个核心指标放在同一横轴下比大小）。 |
+| ⭐ | [fig_q2_distributions.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_distributions.png) / [fig_q4_distributions.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_distributions.png) | — | 小提琴分布图 + 固定阈值（低于全局 P10 / 高于全局 P90）两端占比堆叠柱状图。 |
+
+---
+
+## 四、写报告与答辩必须注意的 5 条解释边界（防踩坑）
+
+1. **上映年份 $\neq$ 海报设计年份**：v2 已将海报统一换为原语言版（彻底消除了 v1 中 41% 中文版海报的本地化污染），但 TMDB 不提供海报上架日期，老电影可能混入近年蓝光修复版或流媒体重绘版海报，这会部分拉平早期与现代的差异。
+2. **推定国家组 $\neq$ 文化因果**：国家归属由制片参与国与原语言推定，反映的是该组入选影片的样本特征（包含各国类型构成、商业发行习惯差异），**不能直接拔高为「某国民族审美文化导致」**。
+3. **「主辅色」特指有色像素前两大簇**：上游 `color_features.csv` 的 `dom1..3` 只对 $S \ge 0.20$ 的有色像素做 $k=3$ 聚类。因此大面积纯黑底、白底不在 `dom1..3` 内；且 $k=3$ 常把同一色相按明暗拆成两簇（60% 电影前两主色色相夹角 < 30°），因此我们用 **14 类共现（含暗色簇）和 Lab 色差 $\Delta E_{76}$**，而不按传统互补色理论硬套。
+4. **上下空间对比含标题排版效应**：预处理裁去了底部 12% 演职员表，「下半部」对应原海报 12%–50% 的位置，常包含片名大字，因此 `上减下明度` 既反映构图光影，也包含各国片名排版习惯。
+5. **PCA 第一主成分的权重说明**：9 项基础特征中 `高饱和像素占比 (vivid_frac)` 与 `色彩丰富度 (colorful)` 高度相关（$r = 0.823$），因此 PC1（解释 ~32% 方差）主要综合反映「鲜艳与色彩丰富程度」，PC2（~18.5%）主要反映「整体明度 vs 中心聚光反差」。
+
+---
+
+## 五、数据表与代码索引（如需查数或重跑）
+
+- **文字报告**：[时间结论.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/reports/时间结论.md)、[国家结论.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/reports/国家结论.md)、[项目实现与结果解读.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/项目实现与结果解读.md)、[PPT 讲述建议.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/讲述建议.md)、[增量结果说明 analysis_notes.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/tables/advanced/v3-20261118/analysis_notes.md)
+- **关键数据表**：
+  - 基线统计：`outputs/c/tables/time_decade.csv`、`time_yearly.csv`、`country_summary.csv`、`hue_summary.csv`、`contrasts.csv`、`country_group.csv`
+  - 增量统计：`outputs/c/tables/advanced/v3-20261118/group_summary.csv`、`advanced_contrasts.csv`、`convergence_summary.csv`、`cooccurrence_top_pairs.csv`、`profiles.csv`、`artifact_index.csv`（含所有产物的生成命令与输入表索引）
+- **一键复现与验收命令**（仓库根目录下执行）：
+  ```powershell
+  # 基线分析与验收（70 项检查）
+  python outputs/c/scripts/c99_validate.py --stage all
+
+  # 增量图表重绘与验收（98 项检查）
+  python outputs/c/scripts/c_adv_plot.py --run-id v3-20261118
+  python outputs/c/scripts/c99_validate.py --stage advanced --run-id v3-20261118
+  ```

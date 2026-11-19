@@ -129,14 +129,14 @@
     "outputs/c/scripts/c_adv_checks.py": "a6e2883397c33809ef9dae499e97f8285dbf4b02201ca21c1ddf917a276f1d31",
     "outputs/c/scripts/c_adv_common.py": "617024333702df95a240f85791b7622b84582ca43bed53226ace051f57402248",
     "outputs/c/scripts/c_adv_finalize.py": "6235bf14e43ca4e4ede48e497117bb3ff58adc0d2fae86e773c1382dd6be8261",
-    "outputs/c/scripts/c_adv_plot.py": "49c27cb6afd2b51c6203e135fe769fb81dc6d80d5ceeec4cb3f4f6d11937e5a8",
-    "outputs/c/scripts/c_adv_plot_extra.py": "1de30fb72e087b634e269773b094872131ce61f0bcadd76709531bbead5bcc33",
-    "outputs/c/scripts/c_adv_publish.py": "2219bf07a0a1e94ba7e79340b466dcaf053966beefe409634dd8b7ba5782244f",
+    "outputs/c/scripts/c_adv_plot.py": "1a71d1e68d070b7c76fd4d97a491a97346d09f4db0f28093bb47698c428d3a86",
+    "outputs/c/scripts/c_adv_plot_extra.py": "453d6141e4334b9fce624a9ede9b9d8865aea09d62fdfbfa65b9f5cfe4931959",
+    "outputs/c/scripts/c_adv_publish.py": "724d52b7a619f44ca54edcb7d3a113668ba1acaca373e8c10ada237d6104b2ad",
     "outputs/c/scripts/c_adv_reproducibility.py": "c4dc16acb2abe40d5b4b219d4524fccff622980be44ec46ab71650574f625103",
     "outputs/c/scripts/c_adv_validate.py": "b92fd7a15f09d4e61727d417d0198afe5347cf937e6701c1b7063b6b642e7d6f",
     "outputs/c/scripts/c_legacy_check.py": "3b557a3c9f844db0f6bc82d994cd1318e05d231af73dfb8b7bdb14e7c5b9664e",
     "outputs/c/scripts/test_advanced_synthetic.py": "91ed5ebf89b74b231038f599675423f50ff4b4d937d95456667e7fe4709c7413",
     "outputs/c/scripts/c_adv_config.json": "2263d543cfa9f153f786aff4ac7179a015201b0e08e8cb6c37367646e161d8f4"
   },
-  "completed_utc": "2026-11-18T12:38:26.119961+00:00"
+  "completed_utc": "2026-11-19T05:24:21.592545+00:00"
 }

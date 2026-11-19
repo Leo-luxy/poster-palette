@@ -86,8 +86,6 @@ def draw(rows,dimension,ppt=False):
         image,_,_=abstract_poster(r['id'])
         ax.imshow(image,interpolation='nearest',aspect='equal')
     if len(rows)<8: fig.add_subplot(grid[1,3]).axis('off')
-    note_options={'y':.025} if ppt else {}
-    fig.supxlabel('每幅图简化自该组一张海报，不代表组内全部海报。',fontsize=13 if ppt else 10,color='#5c6268',**note_options)
     target=OUT/'ppt' if ppt else ROOT/'figures'/'c'; target.mkdir(parents=True,exist_ok=True)
     fig.savefig(target/('fig_q2_palettes.png' if dimension=='time' else 'fig_q4_palettes.png'),dpi=150 if ppt else 300)
     plt.close(fig)

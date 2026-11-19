@@ -1,4 +1,4 @@
-﻿import colorsys
+import colorsys
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -44,14 +44,12 @@ def make(dim):
     fig.suptitle(heading,fontsize=14,fontweight='bold'); path=target/('fig_q2_trend.png' if dim=='time' else 'fig_q4_country.png'); fig.savefig(path,dpi=300); plt.close(fig)
     (OUT/'ppt').mkdir(exist_ok=True)
     with plt.rc_context({'font.size':17, 'axes.titlesize':19, 'axes.labelsize':17, 'xtick.labelsize':15, 'ytick.labelsize':15}):
-        period='1950—2025' if dim=='time' else '2001—2025'
         fig,ax=plt.subplots(figsize=(16,9),layout='constrained'); hue(ax,rows,labels)
-        fig.suptitle(title+'：色相分布\n'+period+' · 排除近灰海报，按电影等权平均',fontsize=20)
+        fig.suptitle(title+'：色相分布',fontsize=20,fontweight='bold')
         fig.savefig(OUT/'ppt'/('fig_q2_hue.png' if dim=='time' else 'fig_q4_hue.png'),dpi=150); plt.close(fig)
         fig,axes=plt.subplots(1,2,figsize=(16,9),layout='constrained')
         for ax,m in zip(axes,METRICS[:2]): draw(ax,m,stats)
-        note='五年窗口中位数及片间四分位距' if dim=='time' else '均值及逐项 95% CI'
-        fig.suptitle(title+'：明度与饱和度\n'+period+' · '+note,fontsize=20)
+        fig.suptitle(title+'：明度与饱和度',fontsize=20,fontweight='bold')
         fig.savefig(OUT/'ppt'/('fig_q2_metrics.png' if dim=='time' else 'fig_q4_metrics.png'),dpi=150); plt.close(fig)
 if __name__=='__main__':
     make('time'); make('country')
