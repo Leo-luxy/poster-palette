@@ -52,25 +52,25 @@ C 组共生成两层图表：**基线图表**（最简洁直观，适合做主�
 
 | 维度 | 报告图 (`figures/c/`) | 对应 PPT 16:9 图 (`outputs/c/ppt/`) | 图面内容与一句话结论 |
 | --- | --- | --- | --- |
-| **时间 Q2** | [fig_q2_trend.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q2_trend.png) | [fig_q2_hue.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q2_hue.png) + [fig_q2_metrics.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q2_metrics.png) | 上：8 个年代 12 色相构成；下：明度/饱和度/丰富度五年滑动中位数与片间 IQR 带。**结论：1970s 后由亮暖转向暗冷，2020s 饱和度回升。** |
-| **时间 Q2** | [fig_q2_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q2_palettes.png) | [fig_q2_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q2_palettes.png) | 每个年代挑 1 张最接近组内中位数的代表海报，抽象成 8×10 连续色块。**用途：给观众直观的年代色彩印象（注意说明是单片示例）。** |
-| **时间 Q2** | [fig_q2_comparisons.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q2_comparisons.png) | — | `2010s − 1950s` 与 `2020–2025 − 2010s` 的三指标均值差及 95% CI。 |
-| **国家 Q4** | [fig_q4_country.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q4_country.png) | [fig_q4_hue.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q4_hue.png) + [fig_q4_metrics.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q4_metrics.png) | 上：七国色相构成；下：七国三指标均值与 95% CI。**结论：法意日偏亮高丰富度，中韩偏暗，韩国饱和度与丰富度最低。** |
-| **国家 Q4** | [fig_q4_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q4_palettes.png) | [fig_q4_palettes.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/fig_q4_palettes.png) | 七国各 1 张中心代表海报的抽象色块图。 |
-| **国家 Q4** | [fig_q4_comparisons.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/fig_q4_comparisons.png) | — | 六组分别减美国组的均值差森林图。 |
+| **时间 Q2** | [fig_q2_trend.png](../../figures/c/fig_q2_trend.png) | [fig_q2_hue.png](ppt/fig_q2_hue.png) + [fig_q2_metrics.png](ppt/fig_q2_metrics.png) | 上：8 个年代 12 色相构成；下：明度/饱和度/丰富度五年滑动中位数与片间 IQR 带。**结论：1970s 后由亮暖转向暗冷，2020s 饱和度回升。** |
+| **时间 Q2** | [fig_q2_palettes.png](../../figures/c/fig_q2_palettes.png) | [fig_q2_palettes.png](ppt/fig_q2_palettes.png) | 每个年代挑 1 张最接近组内中位数的代表海报，抽象成 8×10 连续色块。**用途：给观众直观的年代色彩印象（注意说明是单片示例）。** |
+| **时间 Q2** | [fig_q2_comparisons.png](../../figures/c/fig_q2_comparisons.png) | — | `2010s − 1950s` 与 `2020–2025 − 2010s` 的三指标均值差及 95% CI。 |
+| **国家 Q4** | [fig_q4_country.png](../../figures/c/fig_q4_country.png) | [fig_q4_hue.png](ppt/fig_q4_hue.png) + [fig_q4_metrics.png](ppt/fig_q4_metrics.png) | 上：七国色相构成；下：七国三指标均值与 95% CI。**结论：法意日偏亮高丰富度，中韩偏暗，韩国饱和度与丰富度最低。** |
+| **国家 Q4** | [fig_q4_palettes.png](../../figures/c/fig_q4_palettes.png) | [fig_q4_palettes.png](ppt/fig_q4_palettes.png) | 七国各 1 张中心代表海报的抽象色块图。 |
+| **国家 Q4** | [fig_q4_comparisons.png](../../figures/c/fig_q4_comparisons.png) | — | 六组分别减美国组的均值差森林图。 |
 
 ### 2. 深度加分图表（增量层 `figures/c/advanced/v3-20261118/`，建议挑 2–4 张进报告）
 
 | 推荐优先级 | 图件路径 | 对应 PPT 图 (`outputs/c/ppt/advanced/v3-20261118/`) | 适合讲什么故事 |
 | --- | --- | --- | --- |
-| ⭐⭐⭐ | [fig_q2_q4_warmth.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_q4_warmth.png) | [warmth_trend.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/advanced/v3-20261118/warmth_trend.png) | 上：1950–2025 冷暖投影曲线（15°/30°/45° 三轴一致）；下：七国在 Lab $(b^*, a^*)$ 色度平面的均值与 95% 置信椭圆。**一眼看清 1975–1985 的冷暖大转折，以及日韩偏冷蓝、法意华语偏暖黄红的分离。** |
-| ⭐⭐⭐ | [fig_q4_convergence.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_convergence.png) | [convergence.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/advanced/v3-20261118/convergence.png) | 七国 21 对在 `2001–2010`、`2011–2020`、`2021–2025` 三期的多维距离折线与距离矩阵热力图。**展示 2020 年代各国海报风格的快速趋近。** |
-| ⭐⭐⭐ | [fig_q4_spatial.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_spatial.png) | — | 七国 64×45 像素级明度/饱和度均值热力图、相对七组等权参照的**残差图**，以及上下/左右构图中心。**视觉冲击力强，能看到东亚海报「外暗内亮」与欧洲「通透全亮」的空间对比。**（时间版见 [fig_q2_spatial.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_spatial.png)） |
-| ⭐⭐ | [fig_spot_check_cards.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_spot_check_cards.png) | — | 8 张真实极值海报（中心亮、边缘亮、左右异色、高主辅色差）+ 裁切框/九宫格 + 底部三主色条。**放在「方法」章节解释空间与主辅色指标的物理意义最合适。** |
-| ⭐⭐ | [fig_q2_fingerprint.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_fingerprint.png) / [fig_q4_fingerprint.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_fingerprint.png) | — | 9 项特征标准化画像热力图 + 加权 PCA 投射 + 层次聚类树（1950–1970 与 1980–2025 自然二分；韩国单独成支，美英华语一簇，意法日一簇）。 |
-| ⭐ | [fig_q2_relations.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_relations.png) / [fig_q4_relations.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_relations.png) | — | 14 类（`暗色 + 低饱和 + h0..h11`）无序主辅色共现残差矩阵、前八大色对堆叠柱状图与 $\Delta E_{76}$ 箱线图。 |
-| ⭐ | [fig_q2_q4_contrasts_forest.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_q4_contrasts_forest.png) | — | 9 宫格标准化效应量森林图（以参照分布 SD 为单位，把不同量纲的 6 个核心指标放在同一横轴下比大小）。 |
-| ⭐ | [fig_q2_distributions.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q2_distributions.png) / [fig_q4_distributions.png](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/figures/c/advanced/v3-20261118/fig_q4_distributions.png) | — | 小提琴分布图 + 固定阈值（低于全局 P10 / 高于全局 P90）两端占比堆叠柱状图。 |
+| ⭐⭐⭐ | [fig_q2_q4_warmth.png](../../figures/c/advanced/v3-20261118/fig_q2_q4_warmth.png) | [warmth_trend.png](ppt/advanced/v3-20261118/warmth_trend.png) | 上：1950–2025 冷暖投影曲线（15°/30°/45° 三轴一致）；下：七国在 Lab $(b^*, a^*)$ 色度平面的均值与 95% 置信椭圆。**一眼看清 1975–1985 的冷暖大转折，以及日韩偏冷蓝、法意华语偏暖黄红的分离。** |
+| ⭐⭐⭐ | [fig_q4_convergence.png](../../figures/c/advanced/v3-20261118/fig_q4_convergence.png) | [convergence.png](ppt/advanced/v3-20261118/convergence.png) | 七国 21 对在 `2001–2010`、`2011–2020`、`2021–2025` 三期的多维距离折线与距离矩阵热力图。**展示 2020 年代各国海报风格的快速趋近。** |
+| ⭐⭐⭐ | [fig_q4_spatial.png](../../figures/c/advanced/v3-20261118/fig_q4_spatial.png) | — | 七国 64×45 像素级明度/饱和度均值热力图、相对七组等权参照的**残差图**，以及上下/左右构图中心。**视觉冲击力强，能看到东亚海报「外暗内亮」与欧洲「通透全亮」的空间对比。**（时间版见 [fig_q2_spatial.png](../../figures/c/advanced/v3-20261118/fig_q2_spatial.png)） |
+| ⭐⭐ | [fig_spot_check_cards.png](../../figures/c/advanced/v3-20261118/fig_spot_check_cards.png) | — | 8 张真实极值海报（中心亮、边缘亮、左右异色、高主辅色差）+ 裁切框/九宫格 + 底部三主色条。**放在「方法」章节解释空间与主辅色指标的物理意义最合适。** |
+| ⭐⭐ | [fig_q2_fingerprint.png](../../figures/c/advanced/v3-20261118/fig_q2_fingerprint.png) / [fig_q4_fingerprint.png](../../figures/c/advanced/v3-20261118/fig_q4_fingerprint.png) | — | 9 项特征标准化画像热力图 + 加权 PCA 投射 + 层次聚类树（1950–1970 与 1980–2025 自然二分；韩国单独成支，美英华语一簇，意法日一簇）。 |
+| ⭐ | [fig_q2_relations.png](../../figures/c/advanced/v3-20261118/fig_q2_relations.png) / [fig_q4_relations.png](../../figures/c/advanced/v3-20261118/fig_q4_relations.png) | — | 14 类（`暗色 + 低饱和 + h0..h11`）无序主辅色共现残差矩阵、前八大色对堆叠柱状图与 $\Delta E_{76}$ 箱线图。 |
+| ⭐ | [fig_q2_q4_contrasts_forest.png](../../figures/c/advanced/v3-20261118/fig_q2_q4_contrasts_forest.png) | — | 9 宫格标准化效应量森林图（以参照分布 SD 为单位，把不同量纲的 6 个核心指标放在同一横轴下比大小）。 |
+| ⭐ | [fig_q2_distributions.png](../../figures/c/advanced/v3-20261118/fig_q2_distributions.png) / [fig_q4_distributions.png](../../figures/c/advanced/v3-20261118/fig_q4_distributions.png) | — | 小提琴分布图 + 固定阈值（低于全局 P10 / 高于全局 P90）两端占比堆叠柱状图。 |
 
 ---
 
@@ -86,7 +86,7 @@ C 组共生成两层图表：**基线图表**（最简洁直观，适合做主�
 
 ## 五、数据表与代码索引（如需查数或重跑）
 
-- **文字报告**：[时间结论.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/reports/时间结论.md)、[国家结论.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/reports/国家结论.md)、[项目实现与结果解读.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/项目实现与结果解读.md)、[PPT 讲述建议.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/ppt/讲述建议.md)、[增量结果说明 analysis_notes.md](file:///c:/Users/32505/Desktop/Projects/poster-palette-main/outputs/c/tables/advanced/v3-20261118/analysis_notes.md)
+- **文字报告**：[时间结论.md](reports/时间结论.md)、[国家结论.md](reports/国家结论.md)、[项目实现与结果解读.md](项目实现与结果解读.md)、[PPT 讲述建议.md](ppt/讲述建议.md)、[增量结果说明 analysis_notes.md](tables/advanced/v3-20261118/analysis_notes.md)
 - **关键数据表**：
   - 基线统计：`outputs/c/tables/time_decade.csv`、`time_yearly.csv`、`country_summary.csv`、`hue_summary.csv`、`contrasts.csv`、`country_group.csv`
   - 增量统计：`outputs/c/tables/advanced/v3-20261118/group_summary.csv`、`advanced_contrasts.csv`、`convergence_summary.csv`、`cooccurrence_top_pairs.csv`、`profiles.csv`、`artifact_index.csv`（含所有产物的生成命令与输入表索引）
