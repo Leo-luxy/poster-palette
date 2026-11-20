@@ -1,140 +1,122 @@
-# 海报会说话——四十年电影配色里的类型密码
+# 海报会说话——电影海报配色的类型结构、时间演变、地区差异与口碑效用实证研究
 
 > 数据分析实践 · 课程大作业
 
-**一句话**：用 19,700 部电影的海报配色，从**结构、时间、空间**三个角度回答「什么是流行、什么是套路」。
+**一句话结论**：基于 TMDB 1950—2025 年 **19,700 部**电影与 **19,694 张**原语言版海报，从**类型结构、时间演变、地区空间、口碑效用**四个维度实证揭示——**海报配色是帮观众快速识别题材的「分类路由信号」，而非反映影片好坏的「质量信号」**。
 
 ---
 
-## 这个仓库是什么
+## 核心成果速览（全部已完成并通过自动核验）
 
-一条可复用的流水线：采集 → 特征 → 图 → 成稿。每一层的产物都落在仓库里，下一层直接读，
-不用重跑上游。
-
-```
-TMDB API  ──►  movies.csv  ──┐
-海报 jpg  ──►  color_features.csv ──┴──►  图 1~4  ──►  报告 / PPT
-```
-
-队友打开就能看最新进度，不需要装环境，也不需要 API key。
-
-## 数据资产
-
-| 文件 | 规模 | 用途 |
-| --- | --- | --- |
-| `data/movies.csv` | 19,700 部 | 元数据：片名、年份、类型、评分、语言、海报路径 |
-| `data/color_features.csv` | 19,694 行 | 配色特征：饱和度 / 明度 / 色相分布 / 主色 / 色彩丰富度 |
-| `data/yearly*.csv` | 76 + 1,411 行 | 年度聚合，做趋势图直接读 |
-| `data/movie_details.csv` | 19,700 行 | 详情：生产国家、预算、票房、片长、系列、IMDb id |
-| `data/posters/` | 19,694 张 | 海报原图 342×512，共 911 MB，**原语言版** |
-
-## 工具链
-
-| 脚本 | 输入 → 输出 | 要 key 吗 |
-| --- | --- | --- |
-| `probe/era_expand.py` | TMDB → 按「每年前 2.6%」补片 | 是（仅 A，已跑完） |
-| `probe/plan_orig_posters.py` | TMDB 全部海报 → 挑原语言版 → `poster_plan_v2.csv` | 是（仅 A，已跑完） |
-| `probe/download_orig_posters.py` | 计划 → 下载海报 | 否（要联网） |
-| `scripts/01_fetch.py` | TMDB → `movies.csv` + 海报（v1 全量采集） | 是（仅 A） |
-| `scripts/06_details.py` | TMDB 详情 → `movie_details.csv`（国家 / 预算 / 票房） | 是（仅 A） |
-| `scripts/02_check.py` | `movies.csv` → `quality_report.md` | 否 |
-| `scripts/03_features.py` | 海报 → `color_features.csv` | 否 |
-| `scripts/04_yearly.py` | 两张表 → `yearly*.csv` | 否 |
-| `scripts/05_fig3_score.py` | 两张表 → 图 3 | 否 |
-| `scripts/common.py` | 读数据、类型表、统一配色（**全组共用**） | 否 |
-
-## 可以挖的方向（不预先锁死）
-
-**① 结构：类型和颜色有没有稳定的对应？**
-
-- 做法 A：先按类型分组（科幻 / 爱情 / 恐怖…），比较配色分布
-- 做法 B：不预设分组，直接对海报配色聚类，用肘部法 / 轮廓系数挑合适的 k，
-  看数据自己分出几类「色型」，再回头看这些色型和真实类型重合多少
-
-两种都能独立成图，也可以都做——B 做出来的 k 如果和三类对不上，本身就是结论。
-
-**② 时间：四十年里配色怎么变？**
-
-整体在变暗、变「收」（明度 1960s 0.61 → 2020s 0.50）。
-分类型看会更复杂，值得单独拆。
-
-**③ 空间：不同国家的海报能不能看出差异？**
-
-真国家维度已经有了：`data/movie_details.csv` 的 `production_countries`，14,648 部有记录、125 个国家，
-头部是美国 9,767、英国 2,076、法国 1,984、意大利 954、德国 889、加拿大 844、日本 655。
-用 `common.has_country(df, 'JP')` 取子集。
-
-想用语言当代理也行（`original_language`：英语 10,764、法语 1,107、日语 496…），
-但两者不是一回事——前者是资方/制片地，后者是原始语言，报告里要说清用的哪个。
-
-**④ 效用：颜色和口碑有关系吗？**
-
-已经做过一版：没有。相关系数全部落在 ±0.08 以内（图 3）。
-如果换别的因变量（比如票房、评分人数），可能还有别的故事。
-
-## 分工（方向开放，不锁死）
-
-| 成员 | 负责的维度 | 可能的切入 | 交什么 |
+| 维度 | 核心方法与抗偏误设计 | 关键实证发现 | 核心图件与报告入口 |
 | --- | --- | --- | --- |
-| **A** | 数据与工程 | 采集（✅ 已完成）、数据字典、聚合表、补字段 | 数据可用可信 + 图 3 |
-| **B** | 结构 | 分类对比，或聚类找 k（自选其一或都做） | 1–2 张图 + 检验 |
-| **C** | 时间 / 空间 | 趋势、跨国对比，选一个做深 | 1–2 张图 |
-| **D** | 成稿 | 图表模板、统稿、报告、PPT | 报告 + 12 页 PPT |
+| **数据基线 (A)** | 每年取票数**前 2.6%** 动态分位门槛 + **原语言版海报**替换 + 裁底部 12% + 近灰像素掩膜 ($S \ge 0.20$) 与色相闸门 ($\text{sat\_frac} \ge 0.10$) | 八个年代入库率拉平至 **2.61%–3.06%**（1950s 由 261 扩至 868 部）；替换 **7,724 张**中文化海报，原语言覆盖率达 **98.6%** | [`data/quality_report.md`](data/quality_report.md)<br>[`docs/数据字典.md`](docs/数据字典.md) |
+| **① 结构 (B)** | 九大类型多标签电影级联合 Bootstrap + 屏蔽 $0^\circ\text{–}60^\circ$ 肤色区重归一 + `Conic_5D` 圆锥色度无监督 K-Means ($k=4$) | **明度是区分类型头号指标**（互斥 $\eta^2_H = 0.2193$，爱情较恐怖亮 **+0.1990**）；识别出**明亮浅调 (28.6%)、浓烈暖调 (25.9%)、青蓝冷调 (19.4%)、深暗低彩 (26.0%)** 四套跨题材共享模板（ARI = **0.9913**） | [`figures/b/fig_q1_hue.png`](figures/b/fig_q1_hue.png)<br>[`figures/b/fig_q1_cluster.png`](figures/b/fig_q1_cluster.png)<br>[`outputs/b/README.md`](outputs/b/README.md) |
+| **② 时间 (C)** | 1950–2025 五年居中滑动窗口 + 14 类无序主辅色共现与 $\Delta E_{76}$ + $30^\circ$ 余弦冷暖投影 + 空间构图中心 | 2010s 较 1950s 明度 **−0.0705**、丰富度 **−16.88**、主辅色差 **−14.72**；**1975–1985 年是暖亮向冷暗跃迁的分水岭**；**2020–2025 饱和度逆势反弹 +0.0424**，中心聚光 **+0.0289** | [`figures/c/fig_q2_trend.png`](figures/c/fig_q2_trend.png)<br>[`figures/c/advanced/v3-20261118/fig_q2_q4_warmth.png`](figures/c/advanced/v3-20261118/fig_q2_q4_warmth.png)<br>[`outputs/c/reports/时间结论.md`](outputs/c/reports/时间结论.md) |
+| **③ 空间 (C)** | 2001–2025 原语言锚定合拍归属（七组 10,115 部）+ 七组 $1/7$ 等权参照 + $64\times 45$ 像素级空间残差 + 偏差校正平方距离 $D^2$ | 法(**+0.0598**)/意(**+0.0715**)全幅通透偏亮，日青蓝居首(**33.0%**)，华语外暗内亮(`center_edge_v` **+0.0383**)，韩国在明度(**−0.0772**)/饱和度(**−0.1032**)/丰富度上全线最低；三期 21 对距离 **1.111 → 0.988 → 0.354** 快速趋近 | [`figures/c/fig_q4_country.png`](figures/c/fig_q4_country.png)<br>[`figures/c/advanced/v3-20261118/fig_q4_spatial.png`](figures/c/advanced/v3-20261118/fig_q4_spatial.png)<br>[`figures/c/advanced/v3-20261118/fig_q4_convergence.png`](figures/c/advanced/v3-20261118/fig_q4_convergence.png) |
+| **④ 效用 (A)** | 19,592 部有效评分影片全库与分八大类型相关分析 + 大样本 $p$ 值与实质效应量辨析 | 明度 ($r = \mathbf{+0.047}$)、饱和度 ($\mathbf{-0.052}$)、丰富度 ($\mathbf{-0.045}$) 及各类型 $|r|$ **全部落在 0.08 以内**（$R^2 < 0.3\%$），配色不预测评分 | [`figures/fig_q3_score.png`](figures/fig_q3_score.png)<br>[`data/fig3_stats.csv`](data/fig3_stats.csv) |
+| **成稿交付 (D)** | 全组统稿、A4 Word 三线表与 300-DPI 内嵌图自动编译、12 页 16:9 宽屏 PPT 与渲染预览 | 正式课程报告、全组故事综合报告（含 27 幅图）、12 页宽屏演示文稿及逐页演讲稿／答辩预案全部就绪 | [` outputs/d/综合报告.md`](outputs/d/综合报告.md)<br>[`docs/报告.md`](docs/报告.md) · [`docs/报告.docx`](docs/报告.docx)<br>[`docs/汇报.pptx`](docs/汇报.pptx) · [`docs/汇报.md`](docs/汇报.md) |
 
-具体怎么画、验收标准是什么，都在 `docs/交接文档` 里，这里只定方向。
+---
 
-## 扩展成本（想加东西先看这里）
+## 仓库目录结构
 
-| 想加什么 | 怎么做 | 成本 |
+一条完整落地、每一层产物均可直接读取而无需重跑上游的流水线：
+
+```text
+poster-palette/
+├── README.md                    仓库总览（本文件）
+├── data/                        【只读】v2 公共数据资产（pre-commit + CI 保护）
+│   ├── movies.csv               19,700 部电影元数据（1950–2025，每年票数前 2.6%）
+│   ├── color_features.csv       19,694 行 × 25 列海报配色特征（HSV / 12 扇区 / 丰富度 / 3 主色）
+│   ├── movie_details.csv        19,700 行逐片详情（制片国家 130 个 / 预算 / 票房 / 片长 / 系列）
+│   ├── yearly.csv               76 行年度聚合表（全类型）
+│   ├── yearly_by_genre.csv      1,411 行年度 × 类型聚合表
+│   ├── fig3_stats.csv           图 3 配色与评分分类型相关统计
+│   ├── quality_report.md        v2 数据采集质量体检报告
+│   └── posters/                 19,694 张原语言版海报原图（342×512，共 911 MB）
+├── figures/                     定稿图表发布目录（全部 300 dpi，中文标签）
+│   ├── fig_q1_hue.png           图 1 主图副本
+│   ├── fig_q3_score.png         图 3：配色 × 观众评分（A）
+│   ├── b/                       图 1 系列：类型色相与指标、预定对比与肤色屏蔽、k=4 色型聚类、抽象色卡（B）
+│   └── c/                       图 2 & 图 4 系列：基线趋势/跨国对比/色卡 + advanced/v3-20261118/ 12 张深度图（C）
+├── docs/                        正式提交文档与团队规范
+│   ├── 报告.md / 报告.docx       课程报告定稿（Markdown 源码与 A4 出版级 Word 文档）
+│   ├── 汇报.pptx / 汇报.md       12 页 16:9 宽屏演示文稿与配套逐页讲稿、答辩 Q&A 预案
+│   ├── 数据字典.md               字段定义、计算公式、采样与去本地化口径、常见坑
+│   ├── 交接文档.md               各模块绘图规范与验收标准
+│   └── 协作流程.md               Git 协作与只读保护说明
+├── scripts/                     公共基础脚本（采集、体检、特征提取、年度聚合、图 3、common.py）
+├── probe/                       v2 动态分位补片、原语言海报挑选与下载、前后对比探测脚本（A）
+└── outputs/                     各成员工作区（代码、统计表、验证报告、16:9 PPT 图面）
+    ├── a/                       v1 备份、年代分位门槛表、原语言换图计划与特征扰动图
+    ├── b/                       结构维度（类型对比 + Conic_5D 无监督聚类）脚本、表、报告与 36 项验收
+    ├── c/                       时间与空间维度（基线 + v3-20261118 增量）脚本、表、报告与 70+98 项验收
+    └── d/                       统稿编译脚本、综合报告（27 图完整叙事版）、PPT 预览图与 28 项验收
+```
+
+---
+
+## 数据资产（v2 定稿口径）
+
+| 文件 | 规模 | 核心说明 |
 | --- | --- | --- |
-| ~~`production_countries`、`budget`、`revenue`~~ | ✅ 已补，见 `data/movie_details.csv` | 已完成 |
-| 高清海报 / 剧照 | 把 URL 里的 `w342` 换成 `original` | 几分钟，不用 key |
-| 2026 年新片 | 重跑 `01_fetch.py` | 元数据约 15 分钟 + 海报约 40 分钟 |
-| 更多语种 / 更宽年份 | 放宽 `vote_count` 门槛重采 | 同上 |
+| `data/movies.csv` | 19,700 部 | 1950–2025 年，按「每年投票人数前 2.6%」动态门槛入库（1950s 门槛 48–72 票，2010s 144–268 票） |
+| `data/color_features.csv` | 19,694 行 | 裁除底部 12% 演职员区、缩放至 120×160；含 `mean_v`、`mean_s`、`v_std`、`colorful`、`sat_frac` 及 $S \ge 0.20$ 掩膜下的 `hue`、`h0..h11`、`dom1..3`、`ds1..3` |
+| `data/movie_details.csv` | 19,700 行 | 19,674 部含制片国家记录（覆盖 130 个国家／地区：美国 12,135、法国 2,730、英国 2,722、意大利 1,592、德国 1,166、加拿大 1,013、日本 921、西班牙 604、香港 376、中国大陆 291、韩国 280 等） |
+| `data/yearly*.csv` | 76 + 1,411 行 | 逐年与逐年×类型聚合表（所有年份 $n \ge 30$） |
+| `data/posters/` | 19,694 张 | $342 \times 512$ JPG，共 911 MB；**原语言版覆盖率 98.6%**（替换了 v1 中 7,724 张中文化海报） |
 
-## 协作：直接推 main，`data/` 只读
+---
 
-不用建分支、不用提 PR——大家**直接往 `main` 推**，推之前点一下 **Pull origin** 就行。
-唯一不能碰的是 `data/`：数据是所有人的输入，一个人改，另外三个人的图会静默变化。
+## 分工、完成状态与自动化核验
 
-| 谁 | 只改这些 |
-| --- | --- |
-| **B** | `figures/fig_q1_*.png`、`outputs/b/` |
-| **C** | `figures/fig_q2_*.png`、`figures/fig_q4_*.png`、`outputs/c/` |
-| **D** | `docs/报告.*`、`docs/汇报.*`、`outputs/d/` |
-| **A** | `data/`、`scripts/`、`README.md` |
+全组采用「`data/` 只读 + 分目录无冲突直推 `main` + 独立自动化验收脚本」的工程模式，**总计 232 项自动化断言 100% 通过**：
 
-文件名不撞，Git 就不会冲突。`outputs/` 是各人的草稿箱（脚本、试画、中间 CSV），
-`figures/` 是全组发布目录（只放定稿，D 的 PPT 只从这里取图）。`data/` 有三道保护：本地 pre-commit 钩子（`sh scripts/install_hooks.sh` 装一次）、
-CI 检查、以及 A 手上的全量备份。
+| 成员 | 负责模块 | 状态 | 核心交付路径 | 自动化核验命令与结果 |
+| --- | --- | :---: | --- | --- |
+| **A** | 数据工程与口碑效用 (Q3) | ✅ 已完成 | `data/`、`scripts/`、`probe/`、`outputs/a/`、`figures/fig_q3_score.png` | `python scripts/02_check.py`<br>19,700 部主键唯一，海报覆盖率 100% |
+| **B** | 类型结构与无监督聚类 (Q1) | ✅ 已完成 | `outputs/b/`、`figures/b/fig_q1_*.png`、`figures/fig_q1_hue.png` | `python outputs/b/scripts/b99_validate.py`<br>[**36 / 36 项通过**](outputs/b/reports/validation_report.md) |
+| **C** | 时间演变与跨国对比 (Q2 & Q4) | ✅ 已完成 | `outputs/c/`、`figures/c/fig_q2_*.png`、`figures/c/fig_q4_*.png`、`figures/c/advanced/v3-20261118/` | `python outputs/c/scripts/c99_validate.py --stage all`<br>`python outputs/c/scripts/c99_validate.py --stage advanced --run-id v3-20261118`<br>[**基线 70/70 + 增量 98/98 项通过**](outputs/c/tables/advanced/v3-20261118/validation_report.md) |
+| **D** | 报告统稿、Word 排版与 12 页 PPT | ✅ 已完成 | `docs/报告.md`、`docs/报告.docx`、`docs/汇报.pptx`、`docs/汇报.md`、`outputs/d/综合报告.md` | `python outputs/d/scripts/d99_validate.py`<br>[**28 / 28 项通过**](outputs/d/validation_report.md) |
 
-完整的点法（克隆、Pull、push、报错对照）见 [`docs/协作流程`](docs/协作流程.md)，
-**第一次动手前花 5 分钟看一遍**。
+---
 
-## 文档索引
+## 快速阅读与复现指南
 
-| 文档 | 讲什么 |
-| --- | --- |
-| `docs/协作流程` | **怎么推代码**：克隆、切分支、push、提 PR、出错怎么办 |
-| `docs/交接文档` | **怎么干活**：每张图的画法、验收标准、常见坑 |
-| `docs/数据字典` | 每个字段怎么算、取值范围、哪些要过滤 |
-| `scripts/README` | 每个脚本谁用、要不要 key |
+### 1. 不跑代码，直接看成果
+- **想看全组完整故事与全部 27 幅图表解读**：打开 [`outputs/d/综合报告.md`](outputs/d/综合报告.md)
+- **想看正式提交版课程报告与 PPT**：打开 [`docs/报告.docx`](docs/报告.docx)（或 [`docs/报告.md`](docs/报告.md)）与 [`docs/汇报.pptx`](docs/汇报.pptx)（配套讲稿见 [`docs/汇报.md`](docs/汇报.md)，单页高清预览见 `outputs/d/slide_previews/`）
+- **想看各分模块的方法细节与统计表**：
+  - B 组（类型与色型聚类）：[`outputs/b/项目实现与结果解读.md`](outputs/b/项目实现与结果解读.md)
+  - C 组（时间与国家分析）：[`outputs/c/C组工作总结与交付指南.md`](outputs/c/C组工作总结与交付指南.md)、[`outputs/c/项目实现与结果解读.md`](outputs/c/项目实现与结果解读.md)
+  - 数据口径与字段字典：[`docs/数据字典.md`](docs/数据字典.md)
 
-## 数据来源
+### 2. 本地一键重跑与核验（无需联网，无需 API Key）
 
-TMDB API，1950-01-01 至 2025-12-31，采集于 **2026-11-02**（v1）、**2026-11-03**（v2 补片与换图）。
+在仓库根目录下执行：
 
-采样口径不是固定票数，而是**每年取票数前 2.6%**：固定 200 票对 2010s 差不多正好，
-对 1950s 却高了 4 倍，会把老片筛成「前 0.9% 的经典」。改成逐年分位后，
-各年代通过率拉平在 2.6–3.1%，1950s 的样本从 261 部变成 868 部。
+```bash
+# 1) 验证或重跑 B 组（类型对比 + 无监督色型聚类）
+python outputs/b/scripts/b99_validate.py
 
-海报取的是**原语言版**（`iso_639_1 == original_language`，没有则退无文字版），
-不是 TMDB 按 `language=zh-CN` 默认返回的中文版。TMDB 没有海报日期字段，
-所以「首映版 / 重映版」无法区分——这条写进了 `docs/数据字典` 的局限里。
+# 2) 验证或重跑 C 组（时间趋势 + 跨国差异 + v3-20261118 增量分析）
+python outputs/c/scripts/c99_validate.py --stage all
+python outputs/c/scripts/c99_validate.py --stage advanced --run-id v3-20261118
 
-海报版权归各片方，仅用于课程作业的学术展示，不再分发。
+# 3) 重新编译 D 组 Word 报告、12 页 PPT 并运行跨模块一致性核验
+python outputs/d/scripts/d01_build_report_docx.py
+python outputs/d/scripts/d02_build_ppt.py
+python outputs/d/scripts/d99_validate.py
+```
 
-仓库带全部海报，克隆较慢；只看代码和 CSV 用浅克隆：
+---
+
+## 数据来源与版权声明
+
+- 数据采集自 TMDB API，上映日期范围为 `1950-01-01` 至 `2025-12-31`，v1 采集于 **2026-11-02**，v2 动态分位补片与原语言海报替换完成于 **2026-11-03**。
+- 海报图像版权归各出品与发行片方所有，本仓库仅用于课程作业的学术研究与课堂展示，不做商业分发。
+- 仓库包含全部 19,694 张海报原图（约 911 MB），完整克隆体积较大；若仅查阅代码、统计表与定稿文档可使用浅克隆：
 
 ```bash
 git clone --depth 1 https://github.com/Leo-luxy/poster-palette.git
